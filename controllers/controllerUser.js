@@ -4,6 +4,8 @@ const _ = require("lodash");
 const formidable = require("formidable");
 const fs = require('fs');
 const { errorHandler } = require("../helpers/dbErrorHandler");
+const path = require('path');
+
 
 
 // gives user that is available in req.profile
@@ -130,6 +132,10 @@ exports.photo = (req, res) => {
         if (user.photo.data) {
             res.set("Content-Type", user.photo.contentType);
             return res.send(user.photo.data);
+        }
+        else{
+            res.set("Content-Type", "image/png");
+            return res.sendFile(path.resolve("public/user.png"));
         }
     });
 

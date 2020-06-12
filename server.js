@@ -30,11 +30,9 @@ app.use(morgan('dev'));
 app.use(cookieParser());
 //app.use(bodyParser.json());
 app.use(bodyParser.json({limit: '50mb'}));
-
-
-//support parsing of application/x-www-form-urlencoded post data
-//app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.urlencoded({limit: '50mb', extended: true}));
+
+app.use(express.static("public"));
 
 
 // cors {Cross-Origin Resource Sharing}
@@ -49,6 +47,8 @@ app.use("/api", routeUser);
 app.use("/api", routeCat);
 app.use("/api", routeTag);
 app.use("/api", routeContact);
+
+
 
 
 

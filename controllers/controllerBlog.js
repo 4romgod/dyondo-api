@@ -11,6 +11,9 @@ const fs = require("fs");
 
 const { smartTrim } = require("../helpers/blogHandler");
 
+const path = require('path');
+
+
 
 // CREATE A BLOG
 exports.create = (req, res) => {
@@ -279,21 +282,21 @@ exports.listSearch = (req, res) => {
 
 
 // TO GET BLOGS WRITTEN BY USER
-exports.listByUser = (req, res) =>{
-    User.findOne({username: req.params.username}).exec((err, user)=>{
-        if(err){
+exports.listByUser = (req, res) => {
+    User.findOne({ username: req.params.username }).exec((err, user) => {
+        if (err) {
             return res.status(400).json({
                 error: errorHandler(err)
             });
         }
         let userId = user._id;
 
-        Blog.find({author: userId})
+        Blog.find({ author: userId })
             .populate('categories', '_id name slug')
             .populate('tags', '_id name slug')
             .populate("author", "_id name username")
             .select("_id title slug author createdAt updatedAt")
-            .exec((err, data)=>{
+            .exec((err, data) => {
                 if (err) {
                     res.status(400).json({
                         error: errorHandler(err)
@@ -416,8 +419,15 @@ exports.photo = (req, res) => {
                 })
             }
 
-            res.set("Content-Type", blog.photo.contentType)
+            if (blog.photo.data) {
+                res.set("Content-Type", blog.photo.contentType);
+                return res.send(blog.photo.data);
+            }
+            else {
+                res.set("Content-Type", "image/png");
+                res.set('Content-Disposition', 'attachment; filename=defaltImage');
+                return res.sendFile(path.resolve("public/blog.png"));
 
-            return res.send(blog.photo.data);
+            }
         });
 }

@@ -337,7 +337,6 @@ exports.googleLogin = (req, res) => {
 
             const { email_verified, name, email, jti } = response.payload;
 
-
             if (email_verified) {
                 User.findOne({ email }).exec((err, user) => {
                     // user is registered
