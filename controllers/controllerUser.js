@@ -87,7 +87,7 @@ exports.update = (req, res) => {
         if (files.photo) {
 
             // 5.1. if file is too large
-            if (files.photo.size > 1000000) {
+            if (files.photo.size/1024/1024 > 1) {
                 return res.status(400).json({
                     error: "Image should be less than 1MB"
                 });
