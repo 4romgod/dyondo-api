@@ -155,11 +155,11 @@ exports.newsletter = (req, res) => {
                     console.log("ERROR: " + dataRes.errors[0].error);
 
                     return res.status(400).json({
-                        error: "Something went wrong. Please Try again later 1"
+                        error: `${email} is already a member of our Newsletter. Use a different email`
                     });
                 }
                 else {
-                    return res.json({
+                    return res.status(200).json({
                         success: "You are now a part of our Newsletter"
                     });
                 }
