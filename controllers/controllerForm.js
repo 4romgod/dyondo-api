@@ -1,3 +1,4 @@
+const https = require("https");
 const sgMail = require('@sendgrid/mail');
 sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
@@ -40,9 +41,9 @@ exports.contactForm = (req, res) => {
 exports.contactNodemailer = (req, res) => {
     const { email, name, message } = req.body;
     console.log("email body: ");
-    
+
     console.log(req.body);
-    
+
 
     try {
         const mailOptions = {
@@ -121,4 +122,59 @@ exports.contactBlogAuthorForm = (req, res) => {
                 error: "Message could not be sent: Server side"
             });
         });
+}
+
+exports.newsletter = (req, res) => {
+    const { fullname, email } = req.body;
+
+    const data = {
+        members: [{
+            email_address: email,
+            status: "subscribed",
+            merge_fields: {
+                FNAME: fullname
+            }
+        }]
+    };
+    const membersJson = JSON.stringify(data);
+
+    const url = "https://us8.api.mailchimp.com/3.0/lists/21979571f7";
+
+    const options = {
+        method: "POST",
+        auth: "4romgod:" + process.env.MAILCHIP_API_KEY
+    }
+
+    const requestApi = https.request(url, options, function (responseApi) {
+        if (responseApi.statusCode === 200) {
+            responseApi.on("data", function (data) {
+
+                const dataRes = JSON.parse(data);
+
+                if (dataRes.errors.length > 0) {
+                    console.log("ERROR: " + dataRes.errors[0].error);
+
+                    return res.status(400).json({
+                        error: "Something went wrong. Please Try again later 1"
+                    });
+                }
+                else {
+                    return res.json({
+                        success: "You are now a part of our Newsletter"
+                    });
+                }
+
+            });
+
+        }
+        else {
+            return res.status(400).json({
+                error: "Something went wrong. Please Try again later 2"
+            });
+        }
+
+    });
+
+    requestApi.write(membersJson);
+    requestApi.end();
 }
