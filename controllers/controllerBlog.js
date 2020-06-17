@@ -148,10 +148,18 @@ exports.read = (req, res) => {
     slug = slug.toLowerCase();
 
     Blog.findOne({ slug })
-        .populate('categories', '_id name slug')
-        .populate('tags', '_id name slug')
-        .populate('author', '_id name username profile')
         .select('_id title body slug mtitle mdesc categories tags author createdAt updatedAt')
+        .populate('author', '_id name username profile')
+        .populate({
+            path: 'categories',
+            select: '_id name slug',
+            options: { sort: { 'name': 1 } }
+        })
+        .populate({
+            path: 'tags',
+            select: '_id name slug',
+            options: { sort: { 'name': 1 } }
+        })
         .exec((err, data) => {
             if (err) {
                 return res.json({
@@ -192,13 +200,21 @@ exports.listBlogsCatTag = (req, res) => {
     let tags;
 
     Blog.find({})
-        .populate('categories', '_id name slug')
-        .populate('tags', '_id name slug')
-        .populate('author', '_id name username profile')
         .sort({ createdAt: -1 })
+        .select('_id title slug excerpt categories tags author createdAt updatedAt')
         .skip(skip)
         .limit(limit)
-        .select('_id title slug excerpt categories tags author createdAt updatedAt')
+        .populate({
+            path: 'categories',
+            select: '_id name slug',
+            options: { sort: { 'name': 1 } }
+        })
+        .populate({
+            path: 'tags',
+            select: '_id name slug',
+            options: { sort: { 'name': 1 } }
+        })
+        .populate('author', '_id name username profile')
         .exec((err, data) => {
             if (err) {
                 return res.json({
@@ -208,8 +224,9 @@ exports.listBlogsCatTag = (req, res) => {
             blogs = data;
 
             // get all categories
-            Category.find({}).
-                exec((err, cats) => {
+            Category.find({})
+                .sort({ name: 'asc' })
+                .exec((err, cats) => {
                     if (err) {
                         return res.json({
                             error: errorHandler(err)
@@ -218,8 +235,9 @@ exports.listBlogsCatTag = (req, res) => {
                     categories = cats;
 
                     // get all tags
-                    Tag.find({}).
-                        exec((err, t) => {
+                    Tag.find({})
+                        .sort({ name: 'asc' })
+                        .exec((err, t) => {
                             if (err) {
                                 return res.json({
                                     error: errorHandler(err)

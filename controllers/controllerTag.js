@@ -24,15 +24,17 @@ exports.create = function (req, res) {
 
 
 exports.list = function (req, res) {
-    Tag.find({}).exec(function (err, data) {
-        if (err) {
-            return res.status(400).json({
-                error: errorHandler(err)
-            });
-        }
+    Tag.find({})
+        .sort({ name: 'asc' })
+        .exec(function (err, data) {
+            if (err) {
+                return res.status(400).json({
+                    error: errorHandler(err)
+                });
+            }
 
-        res.json(data);
-    });
+            res.json(data);
+        });
 }
 
 
