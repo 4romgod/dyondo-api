@@ -391,7 +391,6 @@ exports.update = (req, res) => {
                     }
 
                     res.json(result);
-
                 });
 
 

@@ -40,10 +40,8 @@ exports.contactForm = (req, res) => {
 
 exports.contactNodemailer = (req, res) => {
     const { email, name, message } = req.body;
-    console.log("email body: ");
-
-    console.log(req.body);
-
+    // console.log("email body: ");
+    // console.log(req.body);
 
     try {
         const mailOptions = {
@@ -63,9 +61,11 @@ exports.contactNodemailer = (req, res) => {
 
         transporter.sendMail(mailOptions, function (err, info) {
             if (err) {
+                //console.log(err);
+                
                 res.status(500).send({
                     success: false,
-                    message: "Something went wrong. Try again later 1"
+                    message: "Something went wrong. Try again later"
                 });
             }
             else {
@@ -80,7 +80,7 @@ exports.contactNodemailer = (req, res) => {
     catch (error) {
         res.status(500).send({
             success: false,
-            message: "Something went wrong. Try again later 2"
+            message: "Something went wrong. Try again later"
         });
     }
 
