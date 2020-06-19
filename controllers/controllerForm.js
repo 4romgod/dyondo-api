@@ -61,11 +61,11 @@ exports.contactNodemailer = (req, res) => {
 
         transporter.sendMail(mailOptions, function (err, info) {
             if (err) {
-                //console.log(err);
-                
+                console.log(err);
+
                 res.status(500).send({
                     success: false,
-                    message: "Something went wrong. Try again later"
+                    message: "Something went wrong. Try again later 1"
                 });
             }
             else {
@@ -80,7 +80,7 @@ exports.contactNodemailer = (req, res) => {
     catch (error) {
         res.status(500).send({
             success: false,
-            message: "Something went wrong. Try again later"
+            message: "Something went wrong. Try again later 2"
         });
     }
 
@@ -90,38 +90,52 @@ exports.contactNodemailer = (req, res) => {
 // contact a blog author
 exports.contactBlogAuthorForm = (req, res) => {
     const { authorEmail, email, name, message } = req.body;
-    //console.log(req.body);
+    console.log(req.body);
 
     let mailList = [authorEmail, process.env.EMAIL_TO];
 
-    const emailData = {
-        to: mailList,
-        from: email,
-        subject: `Someone messaged you from ${process.env.APP_NAME}`,
-        text: `Email received from contact form \n Sender name: ${name} \n Sender email: ${email} \n Sender message: ${message}`,
-        html: `
-            <h4>Message received from:</h4>
-            <p>name: ${name}</p>
-            <p>email: ${email}</p>
-            <p>message: ${message}</p>
-            <hr />
-            <p>This email may contain sensetive information</p>
-            <p>https://seoblog.com</p>
+    try {
+        const emailData = {
+            to: mailList,
+            from: email,
+            subject: `Someone messaged you from ${process.env.APP_NAME}`,
+            text: `Email received from contact form \n Sender name: ${name} \n Sender email: ${email} \n Sender message: ${message}`,
+            html: `
+                <h4>Message Sent to:</h4>
+                <p>name: ${authorEmail}</p>
+                <br />
+                <h4>Message received from:</h4>
+                <p>name: ${name}</p>
+                <p>email: ${email}</p>
+                <p>message: ${message}</p>
+                <hr />
+                <p>This email may contain sensetive information</p>
+                <p>https://www.dyondo.com</p>
+            `
+        };
 
-        `
-    };
+        transporter.sendMail(emailData, function (err, info) {
+            if (err) {
+                console.log(err);
 
-    sgMail.send(emailData)
-        .then((sent) => {
-            return res.json({
-                success: true
-            })
-        })
-        .catch((err) => {
-            res.json({
-                error: "Message could not be sent: Server side"
-            });
+                res.status(500).send({
+                    success: false,
+                    message: "Something went wrong. Try again later"
+                });
+            }
+            else {
+                res.send({
+                    success: true,
+                    message:  `Your message was successfully sent to ${authorEmail}`
+                });
+            }
         });
+    }
+    catch (err) {
+        res.json({
+            error: "Message could not be sent: Server side"
+        });
+    };
 }
 
 exports.newsletter = (req, res) => {

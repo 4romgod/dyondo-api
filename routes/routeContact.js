@@ -10,7 +10,7 @@ const { contactFormValidator } = require("../validators/contactValidationRules")
 
 // route
 router.post("/contact", contactFormValidator,  contactNodemailer);
-router.post("/contact-blog-author", contactFormValidator, isValidated,  contactForm);
+router.post("/contact-blog-author", contactFormValidator, isValidated,  contactBlogAuthorForm);
 
 router.post("/newsletter", newsletter);
 
