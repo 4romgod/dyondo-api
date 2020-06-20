@@ -4,7 +4,12 @@ const bodyParser = require("body-parser");
 const cookieParser = require("cookie-parser");
 const cors = require("cors");
 const mongoose = require("mongoose");
+const path = require('path');
 require("dotenv").config();
+const sitemapUpdate = require("./sitemapUpdate");
+
+sitemapUpdate();
+
 
 // bring routes
 const routeBlog = require("./routes/routeBlog");
@@ -47,6 +52,10 @@ app.use("/api", routeUser);
 app.use("/api", routeCat);
 app.use("/api", routeTag);
 app.use("/api", routeContact);
+
+app.get("/api/sitemap", function(req, res){
+    res.sendFile(path.resolve("public/sitemap.xml"))
+});
 
 
 
