@@ -59,4 +59,10 @@
         <priority>0.8</priority>
         <lastmod>2020-06-20</lastmod>
     </url>
+    <url>
+        <loc>https://www.dyondo.com/blogs/test-sitemap-route</loc>
+        <changefreq>monthly</changefreq>
+        <priority>0.8</priority>
+        <lastmod>2020-06-20</lastmod>
+    </url>
 </urlset>

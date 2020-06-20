@@ -13,9 +13,6 @@ const { smartTrim } = require("../helpers/blogHandler");
 
 const path = require('path');
 
-const sitemapUpdate = require("../sitemapUpdate");
-
-
 // CREATE A BLOG
 exports.create = (req, res) => {
     let form = new formidable.IncomingForm();
@@ -125,8 +122,7 @@ exports.create = (req, res) => {
                                         error: errorHandler(err)
                                     });
                                 }
-                                else {
-                                    sitemapUpdate();
+                                else {                                    
                                     res.json(result);
                                 }
                             });
