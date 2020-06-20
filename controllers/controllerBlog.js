@@ -13,6 +13,7 @@ const { smartTrim } = require("../helpers/blogHandler");
 
 const path = require('path');
 
+const sitemapUpdate = require("../sitemapUpdate");
 
 
 // CREATE A BLOG
@@ -125,6 +126,7 @@ exports.create = (req, res) => {
                                     });
                                 }
                                 else {
+                                    sitemapUpdate();
                                     res.json(result);
                                 }
                             });
