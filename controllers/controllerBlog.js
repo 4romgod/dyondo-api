@@ -35,7 +35,7 @@ exports.create = (req, res) => {
                 error: "Title is required"
             });
         }
-
+        
         if (!body || body.length < 200) {
             return res.status(400).json({
                 error: "Content is too short"
