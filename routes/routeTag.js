@@ -11,11 +11,12 @@ const {isValidated} = require("../validators/authValidator");
 const { tagCreateValidator } = require("../validators/tagValidationRules");
 
 
-const { create, list, read, remove } = require("../controllers/controllerTag");
+const { create, list, listByTopic, read, remove } = require("../controllers/controllerTag");
 
 
-router.post("/tag", tagCreateValidator, isValidated, controllerRequireSignin, adminMiddleware,  create);
+router.post("/tag", controllerRequireSignin, adminMiddleware,  create);
 router.get("/tags", list);
+router.get("/tags/:topic", listByTopic);
 router.get("/tag/:slug", read);
 router.delete("/tag/:slug", controllerRequireSignin, adminMiddleware, remove);
 

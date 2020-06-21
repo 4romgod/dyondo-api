@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const { ObjectId } = mongoose.Schema;
 
 const tagSchema = new mongoose.Schema({
 
@@ -13,6 +14,15 @@ const tagSchema = new mongoose.Schema({
         unique: true,
         index: true,
     },
+    photo: {
+        data: Buffer,
+        contentType: String
+    },
+    topics: [{
+        type: ObjectId,
+        ref: "Field",
+        required: true
+    }]
 
 
 }, {timestamps: true});

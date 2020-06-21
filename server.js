@@ -16,7 +16,7 @@ const routeBlog = require("./routes/routeBlog");
 const routeAuth = require("./routes/routeAuth");
 const routeUser = require("./routes/routeUser");
 const routeCat = require("./routes/routeCat");
-const routeField = require("./routes/routeField");
+const routeTopic = require("./routes/routeTopic");
 const routeTag = require("./routes/routeTag");
 const routeContact = require("./routes/routeContact");
 
@@ -51,7 +51,7 @@ app.use("/api", routeBlog);
 app.use("/api", routeUser);
 app.use("/api", routeCat);
 app.use("/api", routeTag);
-app.use("/api", routeField);
+app.use("/api", routeTopic);
 app.use("/api", routeContact);
 
 app.get("/api/sitemap", function(req, res){

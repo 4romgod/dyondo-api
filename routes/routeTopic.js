@@ -9,13 +9,13 @@ const {isValidated} = require("../validators/authValidator");
 const { catCreateValidator } = require("../validators/catValidationRules");
 
 
-const { create, list, read, remove } = require("../controllers/controllerField");
+const { create, list, read, remove } = require("../controllers/controllerTopic");
 
 
-router.post("/field", controllerRequireSignin, adminMiddleware,  create);
-router.get("/fields", list);
-router.get("/field/:slug", read);
-router.delete("/field/:slug", controllerRequireSignin, adminMiddleware, remove);
+router.post("/topic", controllerRequireSignin, adminMiddleware,  create);
+router.get("/topics", list);
+router.get("/topic/:slug", read);
+router.delete("/topic/:slug", controllerRequireSignin, adminMiddleware, remove);
 
 
 module.exports = router;
