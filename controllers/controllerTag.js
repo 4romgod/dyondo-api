@@ -15,7 +15,7 @@ exports.create = function (req, res) {
 
     let tag = new Tag({ name, topics, slug });
     //console.log(tag);
-    
+
     tag.save(function (err, data) {
         if (err) {
             return res.status(400).json({
@@ -132,15 +132,49 @@ exports.remove = function (req, res) {
 
 
 
+exports.update = function (req, res) {
+    const { name, topics } = req.body;
+
+    let oldSlug = req.params.slug;
+    oldSlug = oldSlug.toLowerCase();
+
+    Tag.findOne({ slug: oldSlug })
+        .exec((err, oldTag) => {
+            if (err) {
+                return res.status(400).json({
+                    error: errorHandler(err)
+                });
+            }
+
+            oldTag.name = name;
+
+            oldTag.slug = oldSlug;
+
+            oldTag.topics = topics;
+
+            oldTag.save(function (err, data) {
+                if (err) {
+                    return res.status(400).json({
+                        error: errorHandler(err)
+                    });
+                };
+                res.json(data);     //send to frontend
+            });
+
+        });
+
+
+}
+
 // exports.create = function (req, res) {
 //     let form = new formidable.IncomingForm();
 //     form.keepExtensions = true;
-    
+
 //     form.parse(req, function (err, fields, files) {
 //         console.log(err);
 //         console.log(fields);
 //         console.log(files);
-        
+
 //         if (err) {
 //             return res.status(400).json({
 //                 error: "Image could not upload"
@@ -148,7 +182,7 @@ exports.remove = function (req, res) {
 //         }
 
 //         //console.log(fields);
-        
+
 
 //         // handle fields
 //         const { name, topics } = fields;
