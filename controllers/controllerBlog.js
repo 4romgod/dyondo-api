@@ -380,7 +380,6 @@ exports.update = (req, res) => {
                     oldBlog.photo.contentType = files.photo.type;
                 }
 
-                // save blog without the categories or tags
                 oldBlog.save(function (err, result) {
                     if (err) {
                         return res.status(400).json({

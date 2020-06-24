@@ -131,9 +131,10 @@ exports.remove = function (req, res) {
 }
 
 
-
 exports.update = function (req, res) {
     const { name, topics } = req.body;
+    console.log(req.body);
+    
 
     let oldSlug = req.params.slug;
     oldSlug = oldSlug.toLowerCase();
@@ -152,10 +153,15 @@ exports.update = function (req, res) {
 
             oldTag.topics = topics;
 
+            console.log("About to save");
+            console.log(oldTag);
+            
+            
+
             oldTag.save(function (err, data) {
                 if (err) {
                     return res.status(400).json({
-                        error: errorHandler(err)
+                        error: "Tag could not be updated!"
                     });
                 };
                 res.json(data);     //send to frontend
