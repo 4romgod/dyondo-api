@@ -31,7 +31,6 @@ router.put("/blog/:slug", controllerRequireSignin, adminMiddleware, update);
 router.delete("/blog/:slug", controllerRequireSignin, adminMiddleware, remove);
 
 
-
 //=============================== PRIVATE USER ROUTES ===========================
 router.post("/user/blog", controllerRequireSignin, authMiddleware, create);
 router.put("/user/blog/:slug", controllerRequireSignin, authMiddleware, canUpdateDeleteBlog, update);

@@ -36,6 +36,7 @@
     "shortid": "^2.2.15",
     "slugify": "^1.4.0",
     "string-strip-html": "^4.4.7",
+    "xml": "^1.0.1",
     "xml-js": "^1.6.11"
   }
 }

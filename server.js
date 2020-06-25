@@ -7,8 +7,6 @@ const mongoose = require("mongoose");
 const path = require('path');
 require("dotenv").config();
 
-const sitemapUpdate = require("./sitemapUpdate");
-
 
 
 // bring routes
@@ -19,6 +17,7 @@ const routeCat = require("./routes/routeCat");
 const routeTopic = require("./routes/routeTopic");
 const routeTag = require("./routes/routeTag");
 const routeContact = require("./routes/routeContact");
+const routeSitemap = require("./routes/routeSitemap");
 
 
 //**********************APP******************************
@@ -53,11 +52,8 @@ app.use("/api", routeCat);
 app.use("/api", routeTag);
 app.use("/api", routeTopic);
 app.use("/api", routeContact);
+app.use("/api", routeSitemap);
 
-app.get("/api/sitemap", function(req, res){
-    sitemapUpdate();
-    res.sendFile(path.resolve("public/sitemap.xml"))
-});
 
 
 //*******************START SERVER***************************
