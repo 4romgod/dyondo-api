@@ -71,10 +71,14 @@ exports.update = (req, res) => {
             });
         }
         // 2. get user from the request profile
-        let user = req.profile;
+        let user = req.profile;            
 
         // 3. combine user object with field data, using lodash
         user = _.extend(user, fields);
+
+        // 3.1 update the user profile url
+        user.profile = `${process.env.CLIENT_URL}/profile/${user.username}`
+
 
         // 4. validate password
         if(fields.password && fields.password.length<6){
@@ -110,6 +114,8 @@ exports.update = (req, res) => {
             user.hashed_password = undefined;
             user.salt = undefined;
             user.photo = undefined;
+            console.log(user);
+            
             res.json(user);
         });
 
