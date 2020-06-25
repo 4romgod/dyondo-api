@@ -15,29 +15,25 @@ router.get("/sitemap.xml", (req, res) => {
 
     xmlText += '<url>'
     xmlText += `<loc>${process.env.CLIENT_URL}/</loc>`
-    xmlText += `<lastmod>Wed Jun 10 2020 00:22:31 GMT+0000 (Coordinated Universal Time)</lastmod>`
-    xmlText += `<changefreq>always</changefreq>`
-    xmlText += `<priority>0.5</priority>`
+    xmlText += `<changefreq>daily</changefreq>`
+    xmlText += `<priority>1.0</priority>`
     xmlText += '</url>'
 
     xmlText += '<url>'
     xmlText += `<loc>${process.env.CLIENT_URL}/blogs</loc>`
-    xmlText += `<lastmod>Wed Jun 10 2020 00:22:31 GMT+0000 (Coordinated Universal Time)</lastmod>`
-    xmlText += `<changefreq>always</changefreq>`
+    xmlText += `<changefreq>daily</changefreq>`
     xmlText += `<priority>0.5</priority>`
     xmlText += '</url>'
 
     xmlText += '<url>'
     xmlText += `<loc>${process.env.CLIENT_URL}/newsletter</loc>`
-    xmlText += `<lastmod>Wed Jun 10 2020 00:22:31 GMT+0000 (Coordinated Universal Time)</lastmod>`
-    xmlText += `<changefreq>always</changefreq>`
-    xmlText += `<priority>0.5</priority>`
+    xmlText += `<changefreq>daily</changefreq>`
+    xmlText += `<priority>1.0</priority>`
     xmlText += '</url>'
 
     xmlText += '<url>'
     xmlText += `<loc>${process.env.CLIENT_URL}/privacyPolicy</loc>`
-    xmlText += `<lastmod>Wed Jun 10 2020 00:22:31 GMT+0000 (Coordinated Universal Time)</lastmod>`
-    xmlText += `<changefreq>always</changefreq>`
+    xmlText += `<changefreq>daily</changefreq>`
     xmlText += `<priority>0.5</priority>`
     xmlText += '</url>'
 
@@ -49,9 +45,8 @@ router.get("/sitemap.xml", (req, res) => {
                 data.map((blog) => {
                     xmlText += '<url>'
                     xmlText += `<loc>${process.env.CLIENT_URL}/blog/${blog.slug}</loc>`
-                    xmlText += `<lastmod>${blog.updatedAt}</lastmod>`
-                    xmlText += `<changefreq>always</changefreq>`
-                    xmlText += `<priority>0.5</priority>`
+                    xmlText += `<changefreq>daily</changefreq>`
+                    xmlText += `<priority>1.0</priority>`
                     xmlText += '</url>'
                 });
 
@@ -63,9 +58,8 @@ router.get("/sitemap.xml", (req, res) => {
                             tags.map((tag) => {
                                 xmlText += '<url>'
                                 xmlText += `<loc>${process.env.CLIENT_URL}/tags/${tag.slug}</loc>`
-                                xmlText += `<lastmod>${tag.updatedAt}</lastmod>`
-                                xmlText += `<changefreq>always</changefreq>`
-                                xmlText += `<priority>0.5</priority>`
+                                xmlText += `<changefreq>daily</changefreq>`
+                                xmlText += `<priority>1.0</priority>`
                                 xmlText += '</url>'
                             })
 
@@ -77,9 +71,8 @@ router.get("/sitemap.xml", (req, res) => {
                                         topics.map((topic) => {
                                             xmlText += '<url>'
                                             xmlText += `<loc>${process.env.CLIENT_URL}/tags/topic/${topic.slug}</loc>`
-                                            xmlText += `<lastmod>${topic.updatedAt}</lastmod>`
-                                            xmlText += `<changefreq>always</changefreq>`
-                                            xmlText += `<priority>0.5</priority>`
+                                            xmlText += `<changefreq>daily</changefreq>`
+                                            xmlText += `<priority>1.0</priority>`
                                             xmlText += '</url>'
                                         })
 
