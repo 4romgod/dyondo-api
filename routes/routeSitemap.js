@@ -44,7 +44,7 @@ router.get("/sitemap.xml", (req, res) => {
             if (data) {
                 data.map((blog) => {
                     xmlText += '<url>'
-                    xmlText += `<loc>${process.env.CLIENT_URL}/blog/${blog.slug}</loc>`
+                    xmlText += `<loc>${process.env.CLIENT_URL}/blogs/${blog.slug}</loc>`
                     xmlText += `<changefreq>daily</changefreq>`
                     xmlText += `<priority>1.0</priority>`
                     xmlText += '</url>'
