@@ -10,8 +10,10 @@ const path = require('path');
 
 // gives user that is available in req.profile
 exports.read = (req, res) => {
-    req.profile.hashed_password = undefined;    //we don't want to send the password
-    return res.json(req.profile);
+    const user = req.profile;
+    user.hashed_password = undefined;    //we don't want to send the password
+
+    return res.json(user);
 }
 
 // any user can see this public profile
@@ -71,7 +73,8 @@ exports.update = (req, res) => {
             });
         }
         // 2. get user from the request profile
-        let user = req.profile;            
+        let user = req.profile; 
+               
 
         // 3. combine user object with field data, using lodash
         user = _.extend(user, fields);

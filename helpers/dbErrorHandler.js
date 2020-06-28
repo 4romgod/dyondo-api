@@ -27,10 +27,14 @@ exports.errorHandler = error => {
             case 11001:
                 message = uniqueMessage(error);
                 break;
+            case 10334:
+                message = "Your Content is Too Large, Max size is 15MB";
+                break;
             default:
                 message = 'Something went wrong';
         }
-    } else {
+    } 
+    else {
         for (let errorName in error.errorors) {
             if (error.errorors[errorName].message) message = error.errorors[errorName].message;
         }
