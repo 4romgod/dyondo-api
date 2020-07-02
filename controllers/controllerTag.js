@@ -135,7 +135,6 @@ exports.update = function (req, res) {
     const { name, topics } = req.body;
     console.log(req.body);
     
-
     let oldSlug = req.params.slug;
     oldSlug = oldSlug.toLowerCase();
 
