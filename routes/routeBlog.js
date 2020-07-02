@@ -37,5 +37,4 @@ router.put("/user/blog/:slug", controllerRequireSignin, authMiddleware, canUpdat
 router.delete("/user/blog/:slug", controllerRequireSignin, authMiddleware, canUpdateDeleteBlog, remove);
 
 
-
 module.exports = router;

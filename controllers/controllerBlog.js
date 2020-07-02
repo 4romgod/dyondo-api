@@ -19,7 +19,7 @@ exports.create = (req, res) => {
 
     form.keepExtensions = true;
 
-    form.parse(req, function (err, fields, files) {
+    form.parse(req, function (err, fields, files) {        
         if (err) {
             return res.status(400).json({
                 error: "Image could not upload"
@@ -27,7 +27,7 @@ exports.create = (req, res) => {
         }
 
         // handle fields
-        const { title, body, categories, tags } = fields;
+        const { title, body, categories, tags } = fields;        
 
         // validate fields
         if (!title || !title.length) {
@@ -73,7 +73,7 @@ exports.create = (req, res) => {
         // handle files
         if (files.photo) {
             if (files.photo.size > 1000000) {
-                return res.status(400).json({
+                return res.status(413).json({
                     error: "Image should be less than 1MB in size"
                 });
             }

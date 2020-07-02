@@ -164,6 +164,8 @@ exports.newsletter = (req, res) => {
             responseApi.on("data", function (data) {
 
                 const dataRes = JSON.parse(data);
+                //console.log(dataRes);
+                
 
                 if (dataRes.errors.length > 0) {
                     console.log("ERROR: " + dataRes.errors[0].error);
