@@ -21,8 +21,10 @@ exports.create = (req, res) => {
 
     form.parse(req, function (err, fields, files) {        
         if (err) {
+            //console.log(err);
+            
             return res.status(400).json({
-                error: "Image could not upload"
+                error: "Your Content is Too Large, Max size is 15MB"
             });
         }
 
@@ -65,8 +67,10 @@ exports.create = (req, res) => {
         blog.mtitle = `${title} | ${process.env.APP_NAME}`;
 
         blog.body = body;
-        blog.excerpt = smartTrim(body, 320, " ", " ...");
-        blog.mdesc = stripHtml(body.substring(0, 160));
+        //blog.excerpt = smartTrim(body, 320, " ", " ...");
+        //blog.mdesc = stripHtml(body.substring(0, 160));
+        blog.excerpt = title;
+        blog.mdesc = title;
 
         blog.author = req.user._id;
 
