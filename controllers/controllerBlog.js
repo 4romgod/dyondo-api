@@ -19,17 +19,17 @@ exports.create = (req, res) => {
 
     form.keepExtensions = true;
 
-    form.parse(req, function (err, fields, files) {        
+    form.parse(req, function (err, fields, files) {
         if (err) {
             //console.log(err);
-            
+
             return res.status(400).json({
                 error: "Your Content is Too Large, Max size is 15MB"
             });
         }
 
         // handle fields
-        const { title, body, categories, tags } = fields;        
+        const { title, body, categories, tags } = fields;
 
         // validate fields
         if (!title || !title.length) {
@@ -37,16 +37,10 @@ exports.create = (req, res) => {
                 error: "Title is required"
             });
         }
-        
+
         // if (!body || body.length < 200) {
         //     return res.status(400).json({
         //         error: "Content is too short"
-        //     });
-        // }
-
-        // if (!categories || !categories.length === 0) {
-        //     return res.status(400).json({
-        //         error: "Atleast one category is required"
         //     });
         // }
 
@@ -107,9 +101,8 @@ exports.create = (req, res) => {
 
             //res.json(result);
 
-            //add categories
-            Blog.findByIdAndUpdate(result._id,
-                { $push: { categories: arrayOfCat } }, { new: true })
+            // add tags 
+            Blog.findByIdAndUpdate(result._id, { $push: { tags: arrayOfTag } }, { new: true })
                 .exec(function (err, result) {
                     if (err) {
                         return res.status(400).json({
@@ -117,23 +110,9 @@ exports.create = (req, res) => {
                         });
                     }
                     else {
-                        // add tags 
-                        Blog.findByIdAndUpdate(result._id,
-                            { $push: { tags: arrayOfTag } }, { new: true })
-                            .exec(function (err, result) {
-                                if (err) {
-                                    return res.status(400).json({
-                                        error: errorHandler(err)
-                                    });
-                                }
-                                else {                                    
-                                    res.json(result);
-                                }
-                            });
+                        res.json(result);
                     }
-
                 });
-
 
         });
 
@@ -177,11 +156,7 @@ exports.update = (req, res) => {
                 if (body) {
                     oldBlog.excerpt = smartTrim(body, 320, '', " ...");
                     oldBlog.desc = stripHtml(body.substring(0, 160));
-                }
-
-                if (categories) {
-                    oldBlog.categories = categories.split(',');
-                }
+                }s
 
                 if (tags) {
                     oldBlog.tags = tags.split(',');
