@@ -314,9 +314,9 @@ exports.listBlogsCatTag = (req, res) => {
 exports.listRelated = (req, res) => {
     //console.log(req.body.blog);
     let limit = req.body.limit ? parseInt(req.body.limit) : 3;
-    const { _id, categories } = req.body.blog;
+    const { _id, tags } = req.body.blog;
 
-    Blog.find({ _id: { $ne: _id }, categories: { $in: categories } })
+    Blog.find({ _id: { $ne: _id }, tags: { $in: tags } })
         .limit(limit)
         .populate('author', '_id name username profile')
         .select('title slug excerpt author createdAt updatedAt')
