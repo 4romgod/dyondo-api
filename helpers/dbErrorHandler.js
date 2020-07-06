@@ -24,6 +24,8 @@ exports.errorHandler = error => {
     if (error.code) {
         switch (error.code) {
             case 11000:
+                message = "Title already exists";
+                break;
             case 11001:
                 message = uniqueMessage(error);
                 break;
