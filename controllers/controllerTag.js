@@ -1,5 +1,5 @@
 const Tag = require("../models/tag");
-const Field = require("../models/topic");
+const Topic = require("../models/topic");
 const Blog = require("../models/blog");
 const slugify = require("slugify");
 const fs = require("fs");
@@ -50,7 +50,7 @@ exports.listByTopic = function (req, res) {
     // console.log(topicSlug);
 
     if (topicSlug) {
-        Field.findOne({ slug: topicSlug })
+        Topic.findOne({ slug: topicSlug })
             .then((topic) => {
                 if (topic.error) {
                     console.log(err);
@@ -63,7 +63,9 @@ exports.listByTopic = function (req, res) {
                 // console.log(topic._id);
 
                 if (topic) {
-                    Tag.find({ topics: topic._id }, null, function (err, data) {
+                    Tag.find({ topics: topic._id })
+                    .sort({ name: 'asc' })
+                    .exec((err, data) =>{
                         if (err) {
                             return res.status(400).json({
                                 error: errorHandler(err)

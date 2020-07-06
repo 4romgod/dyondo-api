@@ -5,7 +5,6 @@ const fs = require("fs");
 
 
 const { errorHandler } = require("../helpers/dbErrorHandler");
-const tag = require("../models/tag");
 
 
 exports.create = (req, res) => {
