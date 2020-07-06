@@ -105,6 +105,8 @@ exports.create = (req, res) => {
             Blog.findByIdAndUpdate(result._id, { $push: { tags: arrayOfTag } }, { new: true })
                 .exec(function (err, result) {
                     if (err) {
+                        console.log(err);
+                        
                         return res.status(400).json({
                             error: errorHandler(err)
                         });
@@ -156,7 +158,7 @@ exports.update = (req, res) => {
                 if (body) {
                     oldBlog.excerpt = smartTrim(body, 320, '', " ...");
                     oldBlog.desc = stripHtml(body.substring(0, 160));
-                }s
+                }
 
                 if (tags) {
                     oldBlog.tags = tags.split(',');
