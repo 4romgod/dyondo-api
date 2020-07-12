@@ -106,7 +106,7 @@ exports.create = (req, res) => {
                 .exec(function (err, result) {
                     if (err) {
                         console.log(err);
-                        
+
                         return res.status(400).json({
                             error: errorHandler(err)
                         });
@@ -335,10 +335,13 @@ exports.listSearch = (req, res) => {
     console.log(req.query);
     const { search } = req.query;
 
-
     if (search) {
         Blog.find({
-            $or: [{ title: { $regex: search, $options: 'i' } }, { body: { $regex: search, $options: 'i' } }]
+            $or: [
+                { title: { $regex: search, $options: 'i' } },
+                { body: { $regex: search, $options: 'i' } },
+                { tags: {$elemMatch: {name: search}} }
+            ]
         }, (err, blogs) => {
             if (err) {
                 res.status(400).json({
