@@ -126,7 +126,7 @@ exports.contactBlogAuthorForm = (req, res) => {
             else {
                 res.send({
                     success: true,
-                    message:  `Your message was successfully sent to ${authorEmail}`
+                    message:  `Your message was successfully sent to ${name}`
                 });
             }
         });
