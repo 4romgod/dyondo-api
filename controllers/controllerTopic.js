@@ -10,7 +10,6 @@ const { errorHandler } = require("../helpers/dbErrorHandler");
 exports.create = (req, res) => {
     const { name } = req.body;
     console.log(req.body);
-    
 
     if (!name || !name.length) {
         return res.status(400).json({
