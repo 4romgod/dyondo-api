@@ -1,11 +1,12 @@
 const express = require("express");
 const router = express.Router();
 
-// auth controllers
+// Controllers Auth
 // controllerRequireSignin checks if it is an authenticated user
 // authMiddleware makes user available in the request profile
 const { controllerRequireSignin, authMiddleware, adminMiddleware } = require("../controllers/controllerAuth");
 
+// Controllers Users
 const { read, publicProfile, update, photo } = require("../controllers/controllerUser");
 
 

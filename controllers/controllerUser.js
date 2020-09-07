@@ -149,4 +149,3 @@ exports.photo = (req, res) => {
     });
 
 }
-

@@ -12,22 +12,24 @@ const sgMail = require('@sendgrid/mail');
 sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
 
-
-
+// accepts new user details and emails activation link
 exports.controllerPreSignup = (req, res) => {
     const { name, email, password } = req.body;
 
     // 1. Check database for the user
     User.findOne({ email: email.toLowerCase() }, (err, user) => {
+        
         // 2. If user already exists, 400 status code
         if (user) {
             return res.status(400).json({
                 error: "Email is taken"
             });
         }
+
         // 3. generate a token
         const token = jwt.sign({ name, email, password }, process.env.JWT_ACCOUNT_ACTIVATION, { expiresIn: '10m' });
 
+        // 4. design email with activation link
         const emailData = {
             from: process.env.EMAIL_FROM,
             to: email,
@@ -41,6 +43,7 @@ exports.controllerPreSignup = (req, res) => {
             `
         };
 
+        // 5. send email with activation link
         sgMail.send(emailData)
             .then((sent) => {
                 return res.json({
@@ -146,7 +149,6 @@ exports.controllerSignin = (req, res) => {
     });
 
 };
-
 
 
 // Signout a signed in user

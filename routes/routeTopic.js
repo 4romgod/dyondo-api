@@ -1,17 +1,18 @@
 const express = require("express");
 const router = express.Router();
 
-// middleware auth controllers
+// Controllers Auth
 const { controllerRequireSignin, adminMiddleware } = require("../controllers/controllerAuth");
 
-// validators
+// Controllers Topic
+const { create, list, read, remove } = require("../controllers/controllerTopic");
+
+// Validators
 const {isValidated} = require("../validators/authValidator");
 const { catCreateValidator } = require("../validators/catValidationRules");
 
 
-const { create, list, read, remove } = require("../controllers/controllerTopic");
-
-
+// Routes
 router.post("/topic", controllerRequireSignin, adminMiddleware,  create);
 router.get("/topics", list);
 router.get("/topic/:slug", read);

@@ -1,11 +1,12 @@
 const express = require("express");
 const router = express.Router();
-// const xml = require('xml');
 
+// Models
 const Blog = require("../models/blog");
 const Tag = require("../models/tag");
 const Topic = require("../models/topic");
 
+// Route Sitemap
 router.get("/sitemap.xml", (req, res) => {
 
     //generate sitemap
@@ -90,8 +91,7 @@ router.get("/sitemap.xml", (req, res) => {
 
         });
 
-
-
 });
+
 
 module.exports = router;
