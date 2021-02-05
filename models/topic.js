@@ -7,14 +7,11 @@ const topicSchema = new mongoose.Schema({
         required: true,
         maxlength: 32,
     },
-    slug: {         //replace space by -
+    slug: {
         type: String,
         unique: true,
         index: true,
-    },
-
+    }
 }, {timestamps: true});
 
-
 module.exports = mongoose.model("Topic", topicSchema);
-

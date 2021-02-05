@@ -2,7 +2,6 @@ const mongoose = require("mongoose");
 const { ObjectId } = mongoose.Schema;
 
 const tagSchema = new mongoose.Schema({
-
     name: {
         type: String,
         trim: true,
@@ -23,9 +22,6 @@ const tagSchema = new mongoose.Schema({
         ref: "Field",
         required: true
     }]
-
-
 }, {timestamps: true});
-
 
 module.exports = mongoose.model("Tag", tagSchema);
