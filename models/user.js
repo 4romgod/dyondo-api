@@ -52,11 +52,12 @@ const userSchema = new mongoose.Schema({
     }
 }, userSchemaOptions);
 
-userSchema.virtual('password').set(function (password) {
-    this._password = password;
-    this.salt = this.makeSalt();
-    this.hashed_password = this.encryptPassword(password);
-})
+userSchema.virtual('password')
+    .set(function (password) {
+        this._password = password;
+        this.salt = this.makeSalt();
+        this.hashed_password = this.encryptPassword(password);
+    })
     .get(function () {
         return this._password;
     });
@@ -81,7 +82,7 @@ userSchema.methods = {
             return '';
         }
     },
-    makeSalt: function() {
+    makeSalt: function () {
         return Math.round(new Date().valueOf() * Math.random()) + '';
     },
 }

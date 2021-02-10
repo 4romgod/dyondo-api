@@ -16,7 +16,7 @@ function uniqueMessage(error){
 };
  
 /**
- * Get the error message from error object
+ * Get the error message from mongodb error object
  */
 exports.errorHandler = error => {
     let message = '';
