@@ -1,14 +1,15 @@
 {
-  "name": "backend",
+  "name": "dyondo-api",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "./src/index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "nodemon index.js",
-    "start": "node index.js"
+    "dev": "nodemon src/index.js",
+    "start": "node src/index.js",
+    "test": "mocha test/**/*.js -r dotenv/config",
+    "clean": "rm -rf node_modules"
   },
-  "author": "",
+  "author": "Ebenezer Mathebula",
   "license": "ISC",
   "dependencies": {
     "@sendgrid/mail": "^7.6.1",
@@ -38,5 +39,10 @@
     "string-strip-html": "^4.4.7",
     "xml": "^1.0.1",
     "xml-js": "^1.6.11"
+  },
+  "devDependencies": {
+    "chai": "^4.3.6",
+    "mocha": "^9.2.0",
+    "mongodb-memory-server": "^8.3.0"
   }
 }
