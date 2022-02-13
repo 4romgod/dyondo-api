@@ -7,7 +7,6 @@ const expressJwt = require("express-jwt");
 const _ = require("lodash");
 const { OAuth2Client } = require("google-auth-library");
 const sgMail = require('@sendgrid/mail');
-
 sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
 exports.controllerPreSignup = (req, res) => {
@@ -19,10 +18,12 @@ exports.controllerPreSignup = (req, res) => {
         }
 
         const token = jwt.sign({ name, email, password }, process.env.JWT_ACCOUNT_ACTIVATION, { expiresIn: '10m' });
+        
         const activationEmailData = {
             from: process.env.EMAIL_FROM,
             to: email,
             subject: `Dyondo Account Activation Link`,
+            text: 'and easy to do anywhere, even with Node.js',
             html: `
                 <h4>Please use the following link to activate your account:</h4>
                 <p>${process.env.CLIENT_URL}/auth/account/activate/${token}</p>
@@ -31,15 +32,12 @@ exports.controllerPreSignup = (req, res) => {
                 <p>https://www.dyondo.com</p>
             `
         };
-
         sgMail.send(activationEmailData)
             .then((sent) => {
-                return res.json({
-                    message: `Email has been sent to ${email}. Follow the instructions to Activate your Account.`
-                });
-            })
-            .catch((err) => {
-                res.json({ error: "Email could not be sent" });
+                return res.status(200).json({ message: `Email has been sent to ${email}. Follow the instructions to Activate your Account.` });
+            }).catch((err) => {
+                console.log(err);
+                return res.status(500).json({ error: "Email could not be sent" });
             });
     });
 };
@@ -58,15 +56,15 @@ exports.controllerSignup = (req, res) => {
             let newUser = new User({ name, email, password, profile, username });
             newUser.save((err, success) => {
                 if (err) {
+                    console.log(err);
                     return res.status(400).json({ error: "That Email is already registered" });
                 }
 
-                res.json({ message: "Signup success! Please signin." });
+                return res.status(200).json({ message: "Signup success! Please signin." });
             });
         });
-    }
-    else {
-        res.json({ message: "Something went wrong. Try again." });
+    } else {
+        return res.status(500).json({ message: "Something went wrong. Try again." });
     }
 }
 
@@ -85,20 +83,20 @@ exports.controllerSignin = (req, res) => {
         res.cookie('token', token, { expiresIn: '1d' });
 
         const { _id, username, name, email, role } = user;
-        return res.json({ token, user: { _id, username, name, email, role } });
+        return res.status(200).json({ token, user: { _id, username, name, email, role } });
     });
 };
 
 exports.controllerSignout = (req, res) => {
     res.clearCookie("token");
-    res.json({ message: 'Signout successfull' });
+    res.status(200).json({ message: 'Signout successfull' });
 };
 
 // check secret of incoming token, with secret in env file
 // lets us know whether you are signed in or not
 // every request for signed in user contains this jwt
 // makes user available in the request
-exports.controllerRequireSignin = expressJwt({ secret: process.env.JWT_SECRET });
+exports.controllerRequireSignin = expressJwt({ secret: process.env.JWT_SECRET, algorithms: ['RS256'] });
 
 exports.authMiddleware = (req, res, next) => {
     const authUserId = req.user._id;
@@ -162,22 +160,19 @@ exports.controllerForgotPassword = (req, res) => {
                     <hr />
                     <p>This email may contain sensetive information</p>
                     <p>https://www.dyondo.com</p>
-        
                 `
         };
 
         return user.updateOne({ resetPasswordLink: token }, (err, success) => {
             if (err) {
-                return res.json({ error: errorHandler(err) });
-            }
-            else {
+                return res.status(500).json({ error: errorHandler(err) });
+            } else {
                 sgMail.send(emailData)
                     .then((sent) => {
-                        return res.json({ message: `Email has been sent to ${email}. Follow the instructions to reset your password. Link expires in 10min` });
-                    })
-                    .catch((err) => {
-                        res.json({ error: "Email could not be sent" });
-                    })
+                        return res.status(200).json({ message: `Email has been sent to ${email}. Follow the instructions to reset your password. Link expires in 10min` });
+                    }).catch((err) => {
+                        return res.status(500).json({ error: "Email could not be sent" });
+                    });
             }
         });
     });
@@ -201,13 +196,13 @@ exports.controllerResetPassword = (req, res) => {
                     password: newPassword,
                     resetPasswordLink: ''
                 }
-
                 user = _.extend(user, updatedFields);
                 user.save((err, result) => {
                     if (err) {
                         return res.status(401).json({ error: errorHandler(err) });
                     }
-                    res.json({ message: `Great! Now you can login with your new password` });
+
+                    return res.status(200).json({ message: `Great! Now you can login with your new password` });
                 });
             });
         });
@@ -227,9 +222,8 @@ exports.googleLogin = (req, res) => {
                     res.cookie('token', token, { expiresIn: '1d' });
 
                     const { _id, email, name, role, username } = user;
-                    return res.json({ token, user: { _id, email, name, role, username } });
-                }
-                else {
+                    return res.status(200).json({ token, user: { _id, email, name, role, username } });
+                } else {
                     let username = shortId.generate();
                     let profile = `${process.env.CLIENT_URL}/profile/${username}`;
                     let password = jti;
@@ -237,21 +231,17 @@ exports.googleLogin = (req, res) => {
 
                     newUser.save((err, data) => {
                         if (err) {
-                            return res.status(400).json({
-                                error: errorHandler(err)
-                            });
+                            return res.status(400).json({ error: errorHandler(err) });
                         }
 
                         const token = jwt.sign({ _id: data._id }, process.env.JWT_SECRET, { expiresIn: '1d' });
                         res.cookie('token', token, { expiresIn: '1d' });
                         const { _id, email, name, role, username } = data;
-                        return res.json({ token, user: { _id, email, name, role, username } });
-
+                        return res.status(200).json({ token, user: { _id, email, name, role, username } });
                     });
                 }
             });
-        }
-        else {
+        } else {
             return res.status(400).json({ error: "Google login failed. Try again" });
         }
     });

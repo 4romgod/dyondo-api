@@ -18,15 +18,12 @@ const routeSitemap = require("./routes/routeSitemap");
 
 const app = express();
 
-mongoose.connect(process.env.DATABASE_LOCAL,
-    {
-        useNewUrlParser: true,
-        useUnifiedTopology: true,
-        useCreateIndex: true,
-        useFindAndModify: false
-    })
-    .then(() => console.log("DB connected!"));
-
+mongoose.connect(process.env.DATABASE_URL, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+    useCreateIndex: true,
+    useFindAndModify: false
+}).then(() => console.log("DB connected!"));
 
 // HTTP request logger
 app.use(morgan('dev'));
