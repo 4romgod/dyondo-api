@@ -8,70 +8,48 @@ const stripHtml = require("string-strip-html");
 const _ = require("lodash");
 const { errorHandler } = require("../helpers/dbErrorHandler");
 const fs = require("fs");
-
 const { smartTrim } = require("../helpers/blogHandler");
-
 const path = require('path');
 
-// CREATE A BLOG
 exports.create = (req, res) => {
     let form = new formidable.IncomingForm();
-
     form.keepExtensions = true;
-
     form.parse(req, function (err, fields, files) {
         if (err) {
-            return res.status(400).json({
-                error: "Your Content is Too Large, Max size is 15MB"
-            });
+            return res.status(400).json({ error: "Your Content is Too Large" });
         }
 
-        // handle fields
         const { title, body, categories, tags } = fields;
+        console.log(title);
 
-        // validate fields
         if (!title || !title.length) {
-            return res.status(400).json({
-                error: "Title is required"
-            });
+            return res.status(400).json({ error: "Title is required" });
         }
 
         // if (!body || body.length < 200) {
-        //     return res.status(400).json({
-        //         error: "Content is too short"
-        //     });
+        //     return res.status(400).json({ error: "Content is too short" });
         // }
 
         if (!tags || !tags.length === 0) {
-            return res.status(400).json({
-                error: "Atleast one tag is required"
-            });
+            return res.status(400).json({ error: "Atleast one tag is required" });
         }
-
-        // Create the Blog
 
         let blog = new Blog();
         blog.title = title;
-
         let slug = slugify(title);
         blog.slug = slug.toLowerCase();
-
         blog.mtitle = `${title} | ${process.env.APP_NAME}`;
-
         blog.body = body;
-        //blog.excerpt = smartTrim(body, 320, " ", " ...");
+        // blog.excerpt = smartTrim(body, 320, " ", " ...");
         //blog.mdesc = stripHtml(body.substring(0, 160));
         blog.excerpt = title;
         blog.mdesc = title;
-
         blog.author = req.user._id;
 
-        // handle files
         if (files.photo) {
+            console.log('processing photo')
             if (files.photo.size > 1000000) {
-                return res.status(413).json({
-                    error: "Image should be less than 1MB in size"
-                });
+                return res.status(413).json({ error: "Image should be less than 1MB in size" });
             }
             // else if(files.photo){
             //     return res.status(400).json({
@@ -79,47 +57,29 @@ exports.create = (req, res) => {
             //     });
             // }
 
-            // add the files
+            console.log(`readingfile: ${files.photo.path}`)
             blog.photo.data = fs.readFileSync(files.photo.path);
             blog.photo.contentType = files.photo.type;
         }
 
-
-        // split categories and tags
         let arrayOfCat = categories && categories.split(",");
         let arrayOfTag = tags && tags.split(",");
 
-        // save blog without the categories or tags
         blog.save(function (err, result) {
             if (err) {
-                return res.status(400).json({
-                    error: errorHandler(err)
-                });
+                return res.status(400).json({ error: errorHandler(err) });
             }
 
-            //res.json(result);
-
-            // add tags 
             Blog.findByIdAndUpdate(result._id, { $push: { tags: arrayOfTag } }, { new: true })
                 .exec(function (err, result) {
                     if (err) {
-                        console.log(err);
-
-                        return res.status(400).json({
-                            error: errorHandler(err)
-                        });
-                    }
-                    else {
-                        res.json(result);
+                        return res.status(400).json({ error: errorHandler(err) });
+                    } else {
+                        return res.status(200).json(result);
                     }
                 });
-
         });
-
-
     });
-
-
 }
 
 

@@ -2,8 +2,8 @@ const User = require("../models/user");
 const Blog = require("../models/blog");
 const { errorHandler } = require("../helpers/dbErrorHandler");
 const shortId = require("shortid");
-const jwt = require('jsonwebtoken');
-const expressJwt = require("express-jwt");
+const { sign, verify } = require('jsonwebtoken');
+const jwt = require("express-jwt");
 const _ = require("lodash");
 const { OAuth2Client } = require("google-auth-library");
 const sgMail = require('@sendgrid/mail');
@@ -17,8 +17,8 @@ exports.controllerPreSignup = (req, res) => {
             return res.status(400).json({ error: "Email is already taken" });
         }
 
-        const token = jwt.sign({ name, surname, email, password }, process.env.JWT_ACCOUNT_ACTIVATION, { expiresIn: '10m' });
-        
+        const token = sign({ name, surname, email, password }, process.env.JWT_ACCOUNT_ACTIVATION, { expiresIn: '10m' });
+
         const activationEmailData = {
             from: process.env.EMAIL_FROM,
             to: email,
@@ -45,12 +45,12 @@ exports.controllerPreSignup = (req, res) => {
 exports.controllerSignup = (req, res) => {
     const token = req.body.token;
     if (token) {
-        jwt.verify(token, process.env.JWT_ACCOUNT_ACTIVATION, function (err, decoded) {
+        verify(token, process.env.JWT_ACCOUNT_ACTIVATION, function (err, decoded) {
             if (err) {
                 return res.status(401).json({ error: "Link is Expired. Please Signup again" });
             }
 
-            const { name, surname, email, password } = jwt.decode(token);
+            const { name, surname, email, password } = decode(token);
             let username = shortId.generate();
             let profile = `${process.env.CLIENT_URL}/profile/${username}`
             let newUser = new User({ name, surname, email, password, profile, username });
@@ -79,7 +79,7 @@ exports.controllerSignin = (req, res) => {
             return res.status(400).json({ error: "Email and Password do not match." });
         }
 
-        const token = jwt.sign({ _id: user._id }, process.env.JWT_SECRET, { expiresIn: '1d' });
+        const token = sign({ _id: user._id }, process.env.JWT_SECRET, { expiresIn: '1d' });
         res.cookie('token', token, { expiresIn: '1d' });
 
         const { _id, username, name, surname, email, role } = user;
@@ -96,13 +96,13 @@ exports.controllerSignout = (req, res) => {
 // lets us know whether you are signed in or not
 // every request for signed in user contains this jwt
 // makes user available in the request
-exports.controllerRequireSignin = expressJwt({ secret: process.env.JWT_SECRET, algorithms: ['RS256'] });
+exports.controllerRequireSignin = jwt({ secret: process.env.JWT_SECRET, algorithms: ['HS256'] });
 
 exports.authMiddleware = (req, res, next) => {
     const authUserId = req.user._id;
     User.findById({ _id: authUserId }).exec((err, user) => {
         if (err || !user) {
-            return res.status(400).json({ error: "User not found" });
+            return res.status(404).json({ error: "User not found" });
         }
 
         req.profile = user;
@@ -149,7 +149,7 @@ exports.controllerForgotPassword = (req, res) => {
             return res.status(404).json({ error: "User with that email does not exist" });
         }
 
-        const token = jwt.sign({ _id: user._id }, process.env.JWT_RESET_PASSWORD, { expiresIn: '10m' });
+        const token = sign({ _id: user._id }, process.env.JWT_RESET_PASSWORD, { expiresIn: '10m' });
         const emailData = {
             from: process.env.EMAIL_FROM,
             to: email,
@@ -182,20 +182,17 @@ exports.controllerResetPassword = (req, res) => {
     const { resetPasswordLink, newPassword } = req.body;
 
     if (resetPasswordLink) {
-        jwt.verify(resetPasswordLink, process.env.JWT_RESET_PASSWORD, function (err, decided) {
+        verify(resetPasswordLink, process.env.JWT_RESET_PASSWORD, function (err, data) {
             if (err) {
                 return res.status(401).json({ error: 'Expired link. Try again' });
             }
 
             User.findOne({ resetPasswordLink }, (err, user) => {
                 if (err || !user) {
-                    return res.status(400).json({ error: 'Something went wrong. Try later' });
+                    return res.status(400).json({ error: 'Cannot re-use the link. Try again' });
                 }
 
-                const updatedFields = {
-                    password: newPassword,
-                    resetPasswordLink: ''
-                }
+                const updatedFields = { password: newPassword, resetPasswordLink: '' }
                 user = _.extend(user, updatedFields);
                 user.save((err, result) => {
                     if (err) {
@@ -218,7 +215,7 @@ exports.googleLogin = (req, res) => {
         if (email_verified) {
             User.findOne({ email }).exec((err, user) => {
                 if (user) {
-                    const token = jwt.sign({ _id: user._id }, process.env.JWT_SECRET, { expiresIn: '1d' });
+                    const token = sign({ _id: user._id }, process.env.JWT_SECRET, { expiresIn: '1d' });
                     res.cookie('token', token, { expiresIn: '1d' });
 
                     const { _id, email, name, surname, role, username } = user;
@@ -234,7 +231,7 @@ exports.googleLogin = (req, res) => {
                             return res.status(400).json({ error: errorHandler(err) });
                         }
 
-                        const token = jwt.sign({ _id: data._id }, process.env.JWT_SECRET, { expiresIn: '1d' });
+                        const token = sign({ _id: data._id }, process.env.JWT_SECRET, { expiresIn: '1d' });
                         res.cookie('token', token, { expiresIn: '1d' });
                         const { _id, email, name, surname, role, username } = data;
                         return res.status(200).json({ token, user: { _id, email, name, surname, role, username } });

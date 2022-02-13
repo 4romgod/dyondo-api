@@ -15,6 +15,8 @@ const routeTag = require("./routes/routeTag");
 const routeContact = require("./routes/routeContact");
 const routeSitemap = require("./routes/routeSitemap");
 
+const bootstrap = require("./helpers/bootstrapData");
+
 const app = express();
 
 mongoose.connect(process.env.DATABASE_URL, {
@@ -22,7 +24,10 @@ mongoose.connect(process.env.DATABASE_URL, {
     useUnifiedTopology: true,
     useCreateIndex: true,
     useFindAndModify: false
-}).then(() => console.log("DB connected!"));
+}).then(() => console.log("DB connected!")).then(async () => {
+    await bootstrap.bootStrapTopic();
+    // await bootstrap.bootStrapCategory();
+})
 
 // HTTP request logger
 app.use(morgan('dev'));

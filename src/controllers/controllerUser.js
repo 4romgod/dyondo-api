@@ -10,7 +10,7 @@ exports.read = (req, res) => {
     const user = req.profile;
     user.hashed_password = undefined;    //we don't want to send the password
 
-    return res.json(user);
+    return res.status(200).json(user);
 }
 
 exports.publicProfile = (req, res) => {
@@ -83,8 +83,7 @@ exports.update = (req, res) => {
             user.hashed_password = undefined;
             user.salt = undefined;
             user.photo = undefined;
-            console.log(user);
-            
+
             return res.status(200).json(user);
         });
     });
@@ -103,7 +102,7 @@ exports.photo = (req, res) => {
             return res.status(200).send(user.photo.data);
         } else{
             res.set("Content-Type", "image/png");
-            return res.status(200).sendFile(path.resolve("public/user.png"));
+            return res.status(200).sendFile(path.resolve("src/public/user.png"));
         }
     });
 }

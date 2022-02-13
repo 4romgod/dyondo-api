@@ -1,9 +1,7 @@
 const Category = require("../models/category");
 const Blog = require("../models/blog");
 const slugify = require("slugify");
-
 const { errorHandler } = require("../helpers/dbErrorHandler");
-
 
 exports.create = function (req, res) {
     const { name } = req.body;
@@ -14,15 +12,11 @@ exports.create = function (req, res) {
 
     category.save(function (err, data) {
         if (err) {
-            return res.status(400).json({
-                error: errorHandler(err)
-            });
+            return res.status(400).json({ error: errorHandler(err) });
         };
 
         res.json(data);     //send to frontend
-
     });
-
 }
 
 
