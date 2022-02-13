@@ -21,8 +21,6 @@ exports.create = (req, res) => {
 
     form.parse(req, function (err, fields, files) {
         if (err) {
-            //console.log(err);
-
             return res.status(400).json({
                 error: "Your Content is Too Large, Max size is 15MB"
             });
