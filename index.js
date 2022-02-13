@@ -4,17 +4,16 @@ const bodyParser = require("body-parser");
 const cookieParser = require("cookie-parser");
 const cors = require("cors");
 const mongoose = require("mongoose");
-const path = require('path');
 require("dotenv").config();
 
-const routeBlog = require("./routes/routeBlog");
-const routeAuth = require("./routes/routeAuth");
-const routeUser = require("./routes/routeUser");
-const routeCat = require("./routes/routeCat");
-const routeTopic = require("./routes/routeTopic");
-const routeTag = require("./routes/routeTag");
-const routeContact = require("./routes/routeContact");
-const routeSitemap = require("./routes/routeSitemap");
+const routeBlog = require("./src/routes/routeBlog");
+const routeAuth = require("./src/routes/routeAuth");
+const routeUser = require("./src/routes/routeUser");
+const routeCat = require("./src/routes/routeCat");
+const routeTopic = require("./src/routes/routeTopic");
+const routeTag = require("./src/routes/routeTag");
+const routeContact = require("./src/routes/routeContact");
+const routeSitemap = require("./src/routes/routeSitemap");
 
 const app = express();
 
