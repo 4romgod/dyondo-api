@@ -10,14 +10,14 @@ const sgMail = require('@sendgrid/mail');
 sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
 exports.controllerPreSignup = (req, res) => {
-    const { name, email, password } = req.body;
+    const { name, surname, email, password } = req.body;
 
     User.findOne({ email: email.toLowerCase() }, (err, user) => {
         if (user) {
             return res.status(400).json({ error: "Email is already taken" });
         }
 
-        const token = jwt.sign({ name, email, password }, process.env.JWT_ACCOUNT_ACTIVATION, { expiresIn: '10m' });
+        const token = jwt.sign({ name, surname, email, password }, process.env.JWT_ACCOUNT_ACTIVATION, { expiresIn: '10m' });
         
         const activationEmailData = {
             from: process.env.EMAIL_FROM,
@@ -50,10 +50,10 @@ exports.controllerSignup = (req, res) => {
                 return res.status(401).json({ error: "Link is Expired. Please Signup again" });
             }
 
-            const { name, email, password } = jwt.decode(token);
+            const { name, surname, email, password } = jwt.decode(token);
             let username = shortId.generate();
             let profile = `${process.env.CLIENT_URL}/profile/${username}`
-            let newUser = new User({ name, email, password, profile, username });
+            let newUser = new User({ name, surname, email, password, profile, username });
             newUser.save((err, success) => {
                 if (err) {
                     console.log(err);
@@ -72,7 +72,7 @@ exports.controllerSignin = (req, res) => {
     const { email, password } = req.body;
     User.findOne({ email }).exec((err, user) => {
         if (err || !user) {
-            return res.status(400).json({ error: "User with that email does not exist. Please signup." });
+            return res.status(404).json({ error: "User with that email does not exist. Please signup." });
         }
 
         if (!user.passwordMatch(password)) {
@@ -82,8 +82,8 @@ exports.controllerSignin = (req, res) => {
         const token = jwt.sign({ _id: user._id }, process.env.JWT_SECRET, { expiresIn: '1d' });
         res.cookie('token', token, { expiresIn: '1d' });
 
-        const { _id, username, name, email, role } = user;
-        return res.status(200).json({ token, user: { _id, username, name, email, role } });
+        const { _id, username, name, surname, email, role } = user;
+        return res.status(200).json({ token, user: { _id, username, name, surname, email, role } });
     });
 };
 
@@ -114,7 +114,7 @@ exports.adminMiddleware = (req, res, next) => {
     const adminUserId = req.user._id;
     User.findById({ _id: adminUserId }).exec((err, user) => {
         if (err || !user) {
-            return res.status(400).json({ error: "User not found" });
+            return res.status(404).json({ error: "User not found" });
         }
 
         if (user.role != 1) {
@@ -146,7 +146,7 @@ exports.controllerForgotPassword = (req, res) => {
     const { email } = req.body;
     User.findOne({ email }, (err, user) => {
         if (err || !user) {
-            return res.status(400).json({ error: "User with that email does not exist" });
+            return res.status(404).json({ error: "User with that email does not exist" });
         }
 
         const token = jwt.sign({ _id: user._id }, process.env.JWT_RESET_PASSWORD, { expiresIn: '10m' });
@@ -214,20 +214,20 @@ exports.googleLogin = (req, res) => {
     const idToken = req.body.tokenId;
 
     client.verifyIdToken({ idToken, audience: process.env.GOOGLE_CLIENT_ID }).then(response => {
-        const { email_verified, name, email, jti } = response.payload;
+        const { email_verified, name, surname, email, jti } = response.payload;
         if (email_verified) {
             User.findOne({ email }).exec((err, user) => {
                 if (user) {
                     const token = jwt.sign({ _id: user._id }, process.env.JWT_SECRET, { expiresIn: '1d' });
                     res.cookie('token', token, { expiresIn: '1d' });
 
-                    const { _id, email, name, role, username } = user;
-                    return res.status(200).json({ token, user: { _id, email, name, role, username } });
+                    const { _id, email, name, surname, role, username } = user;
+                    return res.status(200).json({ token, user: { _id, email, name, surname, role, username } });
                 } else {
                     let username = shortId.generate();
                     let profile = `${process.env.CLIENT_URL}/profile/${username}`;
                     let password = jti;
-                    let newUser = new User({ name, email, password, profile, username });
+                    let newUser = new User({ name, surname, email, password, profile, username });
 
                     newUser.save((err, data) => {
                         if (err) {
@@ -236,13 +236,13 @@ exports.googleLogin = (req, res) => {
 
                         const token = jwt.sign({ _id: data._id }, process.env.JWT_SECRET, { expiresIn: '1d' });
                         res.cookie('token', token, { expiresIn: '1d' });
-                        const { _id, email, name, role, username } = data;
-                        return res.status(200).json({ token, user: { _id, email, name, role, username } });
+                        const { _id, email, name, surname, role, username } = data;
+                        return res.status(200).json({ token, user: { _id, email, name, surname, role, username } });
                     });
                 }
             });
         } else {
-            return res.status(400).json({ error: "Google login failed. Try again" });
+            return res.status(500).json({ error: "Google login failed. Try again" });
         }
     });
 }

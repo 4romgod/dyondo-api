@@ -8,6 +8,11 @@ exports.contactFormValidator = [
         .isEmpty()
         .withMessage("Name is required"),
 
+    check('Surname')
+        .not()
+        .isEmpty()
+        .withMessage("Surname is required"),
+
     check('email')
         .isEmail()
         .withMessage("Must be valid email address"),
