@@ -1,13 +1,14 @@
 {
   "name": "dyondo-api",
   "version": "1.0.0",
-  "description": "",
+  "description": "Backend API for Dyondo muliti-user blogging platform",
   "main": "./src/index.js",
   "scripts": {
     "dev": "nodemon src/index.js",
     "start": "node src/index.js",
     "test": "mocha test/**/*.js -r dotenv/config",
-    "clean": "rm -rf node_modules"
+    "clean": "rm -rf node_modules",
+    "lint": "eslint lib/* test/* --ext .ts --fix"
   },
   "author": "Ebenezer Mathebula",
   "license": "ISC",
