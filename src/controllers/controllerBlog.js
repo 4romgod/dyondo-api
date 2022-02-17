@@ -7,9 +7,10 @@ const slugify = require("slugify");
 const stripHtml = require("string-strip-html");
 const _ = require("lodash");
 const { errorHandler } = require("../helpers/dbErrorHandler");
-const fs = require("fs");
 const { smartTrim } = require("../helpers/blogHandler");
+const fs = require("fs");
 const path = require('path');
+const { SUCCESS, BAD_REQUEST } = require("../constants").STATUS_CODES;
 
 exports.create = (req, res) => {
     let form = new formidable.IncomingForm();
@@ -82,8 +83,6 @@ exports.create = (req, res) => {
     });
 }
 
-
-// UPDATE A BLOG BY ITS SLUG
 exports.update = (req, res) => {
     let slug = req.params.slug;
     slug = slug.toLowerCase();
@@ -152,12 +151,8 @@ exports.update = (req, res) => {
 
 }
 
-
-
-// TO READ ONE BY BLOG BY SLUG
 exports.read = (req, res) => {
-    let slug = req.params.slug;
-    slug = slug.toLowerCase();
+    const slug = req.params.slug && slugify(req.params.slug).toLowerCase();
 
     Blog.findOne({ slug })
         .select('_id title body slug mtitle mdesc categories tags author createdAt updatedAt')
@@ -174,16 +169,13 @@ exports.read = (req, res) => {
         })
         .exec((err, data) => {
             if (err) {
-                return res.json({
-                    error: errorHandler(err)
-                });
+                return res.status(BAD_REQUEST).json({ error: errorHandler(err) });
             }
-            res.json(data);
+
+            res.status(SUCCESS).json(data);
         });
 }
 
-
-// LIST ALL THE BLOGS
 exports.list = (req, res) => {
     Blog.find({})
         .populate('categories', '_id name slug')
