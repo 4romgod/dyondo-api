@@ -3,6 +3,7 @@ const Topic = require("../models/topic");
 const Blog = require("../models/blog");
 const slugify = require("slugify");
 const { errorHandler } = require("../helpers/dbErrorHandler");
+const { SUCCESS, BAD_REQUEST } = require("../constants").STATUS_CODES;
 
 exports.create = function (req, res) {
     const { name, topics } = req.body;
@@ -12,51 +13,51 @@ exports.create = function (req, res) {
 
     tag.save(function (err, data) {
         if (err) {
-            return res.status(400).json({ error: errorHandler(err) });
+            return res.status(BAD_REQUEST).json({ error: errorHandler(err) });
         };
-        
-        return res.status(200).json(data);     //send to frontend
+
+        return res.status(SUCCESS).json(data);
     });
 }
 
 exports.list = function (req, res) {
-    Tag.find({})
-        .sort({ name: 'asc' })
-        .exec(function (err, data) {
-            if (err) {
-                return res.status(400).json({ error: errorHandler(err)});
-            }
-            return res.status(200).json(data);
-        });
-}
-
-exports.listByTopic = function (req, res) {
-    let topicSlug = req.params.topic;
-    topicSlug = topicSlug.toLowerCase();
+    let topicSlug = req.query.topic;
+    topicSlug = topicSlug ? topicSlug.toLowerCase() : undefined;
 
     if (topicSlug) {
         Topic.findOne({ slug: topicSlug })
             .then((topic) => {
-                if (topic.error) {
-                    console.log(err);
-                    return res.status(400).json({ error: errorHandler(err) });
-                }
-
                 if (topic) {
+                    if (topic.error) {
+                        console.log(err);
+                        return res.status(BAD_REQUEST).json({ error: errorHandler(err) });
+                    }
+
                     Tag.find({ topics: topic._id })
-                    .sort({ name: 'asc' })
-                    .exec((err, data) =>{
-                        if (err) {
-                            return res.status(400).json({ error: errorHandler(err) });
-                        }
+                        .sort({ name: 'asc' })
+                        .exec((err, data) => {
+                            if (err) {
+                                return res.status(BAD_REQUEST).json({ error: errorHandler(err) });
+                            }
 
-                        return res.status(200).json(data);
-                    });
+                            return res.status(SUCCESS).json(data);
+                        });
                 } else {
-                    return;
+                    return res.status(SUCCESS).json({});
                 }
-
-            }).catch((err) => console.log(err));
+            }).catch((err) => {
+                console.log(err);
+                throw err;
+            });
+    } else {
+        Tag.find({})
+            .sort({ name: 'asc' })
+            .exec(function (err, data) {
+                if (err) {
+                    return res.status(BAD_REQUEST).json({ error: errorHandler(err) });
+                }
+                return res.status(SUCCESS).json(data);
+            });
     }
 }
 
@@ -65,9 +66,9 @@ exports.read = function (req, res) {
 
     Tag.findOne({ slug }).exec(function (err, tag) {
         if (err) {
-            return res.status(400).json({ error: errorHandler(err) });
+            return res.status(BAD_REQUEST).json({ error: errorHandler(err) });
         }
-        
+
         Blog.find({ tags: tag })
             .populate('tags', '_id name slug')
             .populate('categories', '_id name slug')
@@ -75,10 +76,10 @@ exports.read = function (req, res) {
             .select('_id title slug excerpt categories tags author createdAt updatedAt')
             .exec((err, data) => {
                 if (err) {
-                    return res.status(400).json({ error: errorHandler(err) });
+                    return res.status(BAD_REQUEST).json({ error: errorHandler(err) });
                 }
 
-                return res.status(200).json({ tag: tag, blogs: data });
+                return res.status(SUCCESS).json({ tag: tag, blogs: data });
             });
     });
 }
@@ -89,33 +90,33 @@ exports.remove = function (req, res) {
 
     Tag.findOneAndRemove({ slug }).exec(function (err, data) {
         if (err) {
-            return res.status(400).json({ error: errorHandler(err) });
+            return res.status(BAD_REQUEST).json({ error: errorHandler(err) });
         }
 
-        return res.status(200).json({ message: 'Tag deleted successfully' });
+        return res.status(SUCCESS).json({ message: "Tag deleted successfully" });
     });
 }
 
 
 exports.update = function (req, res) {
-    const { name, topics } = req.body;    
+    const { name, topics } = req.body;
     let oldSlug = req.params.slug;
     oldSlug = oldSlug.toLowerCase();
 
     Tag.findOne({ slug: oldSlug })
         .exec((err, oldTag) => {
             if (err) {
-                return res.status(400).json({ error: errorHandler(err) });
+                return res.status(BAD_REQUEST).json({ error: errorHandler(err) });
             }
 
             oldTag.name = name;
             oldTag.slug = oldSlug;
-            oldTag.topics = topics; 
+            oldTag.topics = topics;
             oldTag.save(function (err, data) {
                 if (err) {
-                    return res.status(400).json({ error: "Tag could not be updated!" });
+                    return res.status(BAD_REQUEST).json({ error: "Tag could not be updated!" });
                 };
-                return res.status(200).json(data);
+                return res.status(SUCCESS).json(data);
             });
         });
 }

@@ -1,25 +1,12 @@
 const express = require("express");
 const router = express.Router();
-
-
-// Controllers Auth 
 const { controllerRequireSignin, adminMiddleware } = require("../controllers/controllerAuth");
+const { create, list, read, update, remove } = require("../controllers/controllerTag");
 
-// Controllers Tag
-const { create, list, listByTopic, read, update, remove } = require("../controllers/controllerTag");
-
-// Validators
-const {isValidated} = require("../validators/authValidator");
-const { tagCreateValidator } = require("../validators/tagValidationRules");
-
-
-// Routes
-router.post("/tag", controllerRequireSignin, adminMiddleware,  create);
+router.post("/tags", controllerRequireSignin, adminMiddleware, create);
 router.get("/tags", list);
-router.get("/tags/:topic", listByTopic);
-router.get("/tag/:slug", read);
-router.put("/tag/:slug", controllerRequireSignin, adminMiddleware, update);
-router.delete("/tag/:slug", controllerRequireSignin, adminMiddleware, remove);
-
+router.get("/tags/:slug", read);
+router.put("/tags/:slug", controllerRequireSignin, adminMiddleware, update);
+router.delete("/tags/:slug", controllerRequireSignin, adminMiddleware, remove);
 
 module.exports = router;

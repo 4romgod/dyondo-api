@@ -3,24 +3,24 @@ const formidable = require("formidable");
 const slugify = require("slugify");
 const fs = require("fs");
 const { errorHandler } = require("../helpers/dbErrorHandler");
+const { SUCCESS, BAD_REQUEST } = require("../constants").STATUS_CODES;
 
 exports.create = (req, res) => {
     const { name } = req.body;
-    let slug = slugify(name);
-
     if (!name || !name.length) {
-        return res.status(400).json({ error: "Name is required" });
+        return res.status(BAD_REQUEST).json({ error: "Name is required" });
     }
 
     let topic = new Topic();
     topic.name = name;
+    let slug = slugify(name);
     topic.slug = slug.toLowerCase();
     topic.save(function (err, result) {
         if (err) {
-            return res.status(400).json({ error: errorHandler(err) });
+            return res.status(BAD_REQUEST).json({ error: errorHandler(err) });
         }
 
-        return res.status(200).json({ message: "Topic created!" });
+        return res.status(SUCCESS).json({ message: "Topic created!" });
     });
 }
 
@@ -29,10 +29,10 @@ exports.list = (req, res) => {
         .select('_id name slug createdAt updatedAt')
         .exec((err, data) => {
             if (err) {
-                return res.status(400).json({ error: errorHandler(err) });
+                return res.status(BAD_REQUEST).json({ error: errorHandler(err) });
             }
 
-            return res.status(200).json(data);
+            return res.status(SUCCESS).json(data);
         });
 }
 
@@ -44,10 +44,10 @@ exports.read = (req, res) => {
         .select('_id name slug createdAt updatedAt')
         .exec((err, data) => {
             if (err) {
-                return res.status(400).json({ error: errorHandler(err) });
+                return res.status(BAD_REQUEST).json({ error: errorHandler(err) });
             }
             
-            return res.status(200).json(data);
+            return res.status(SUCCESS).json(data);
         });
 }
 
@@ -56,9 +56,9 @@ exports.remove = function (req, res) {
 
     Topic.findOneAndRemove({ slug }).exec(function (err, data) {
         if (err) {
-            return res.status(400).json({ error: errorHandler(err) });
+            return res.status(BAD_REQUEST).json({ error: errorHandler(err) });
         }
 
-        return res.status(200).json({ message: 'Topic deleted successfully' });
+        return res.status(SUCCESS).json({ message: "Topic deleted successfully" });
     });
 }

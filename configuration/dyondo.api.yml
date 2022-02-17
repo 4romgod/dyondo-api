@@ -1,0 +1,209 @@
+swagger: "2.0"
+info:
+  description: "Backend API for Dyondo muliti-user blogging platform"
+  version: "1.0.0"
+  title: "Dyondo API"
+basePath: "/api"
+schemes:
+  - "https"
+  - "http"
+paths:
+  /topics:
+    post:
+      summary: "A topic that a blog is about, e.g Programming, Security, etc."
+      description: "A topic that a blog is about, e.g Programming, Security, etc."
+      tags:
+        - Dyondo
+      operationId: "PostCreateTopic"
+      consumes:
+        - "application/json"
+        - "application/xml"
+      produces:
+        - "application/xml"
+        - "application/json"
+      parameters:
+        - in: "body"
+          name: "body"
+          description: "The Topic object that needs to be added to the DB"
+          required: true
+          schema:
+            $ref: "#/definitions/Topic"
+      responses:
+        "200":
+          description: "Success"
+    get:
+      summary: "Get all the Topics"
+      description: "Get all the Topics"
+      tags:
+        - Dyondo
+      operationId: "GetRetrieveTopics"
+      consumes:
+        - "application/json"
+        - "application/xml"
+      produces:
+        - "application/xml"
+        - "application/json"
+      responses:
+        "200":
+          description: "Success"
+  /topics/{slug}:
+    get:
+      summary: "Get A Topic by the slug"
+      description: "Get A Topic by the slug"
+      tags:
+        - Dyondo
+      operationId: "GetRetrieveTopic"
+      produces:
+        - "application/xml"
+        - "application/json"
+      parameters:
+        - in: "path"
+          name: "slug"
+          description: "Slug of the Topic to be returned"
+          required: true
+          type: "string"
+      responses:
+        "200":
+          description: "success"
+          schema:
+            $ref: "#/definitions/Topic"
+        "400":
+          description: "Bad Request"
+        "404":
+          description: "Topic Not Found"
+    delete:
+      summary: "Delete A Topic by the slug"
+      description: "Get A Topic by the slug"
+      tags:
+        - Dyondo
+      operationId: "DeleteRemoveTopic"
+      produces:
+        - "application/xml"
+        - "application/json"
+      parameters:
+        - name: "slug"
+          in: "path"
+          required: true
+          type: "string"
+      responses:
+        "400":
+          description: "Bad Request"
+        "404":
+          description: "Topic Not Fount"
+  /tags:
+    post:
+      summary: "A tag that a blog has, e.g Java, Python, CircleCi, etc."
+      description: "A tag that a blog has, e.g Java, Python, CircleCi, etc."
+      tags:
+        - Dyondo
+      operationId: "PostCreateTag"
+      consumes:
+        - "application/json"
+        - "application/xml"
+      produces:
+        - "application/xml"
+        - "application/json"
+      parameters:
+        - in: "body"
+          name: "body"
+          description: "The Tag object that needs to be added to the DB"
+          required: true
+          schema:
+            $ref: "#/definitions/Tag"
+      responses:
+        "200":
+          description: "Success"
+    get:
+      summary: "Get all the Tags"
+      description: "Get all the Tags"
+      tags:
+        - Dyondo
+      operationId: "GetRetrieveTags"
+      parameters:
+        - name: "topic"
+          in: "query"
+          description: "Topic slug of the Tags to be returned"
+          required: false
+          type: "string"
+      consumes:
+        - "application/json"
+        - "application/xml"
+      produces:
+        - "application/xml"
+        - "application/json"
+      responses:
+        "200":
+          description: "Success"
+  /tags/{slug}:
+    get:
+      summary: "Get A Tag by the slug"
+      description: "Get A Tag by the slug"
+      tags:
+        - Dyondo
+      operationId: "GetRetrieveTag"
+      produces:
+        - "application/xml"
+        - "application/json"
+      parameters:
+        - in: "path"
+          name: "slug"
+          description: "Slug of the Tag to be returned"
+          required: true
+          type: "string"
+      responses:
+        "200":
+          description: "success"
+          schema:
+            $ref: "#/definitions/Tag"
+        "400":
+          description: "Bad Request"
+        "404":
+          description: "Tag Not Found"
+    put:
+      summary: "Update A Tag by the slug"
+      description: "Update A Tag by the slug"
+      tags:
+        - Dyondo
+      operationId: "PutUpdateTag"
+      produces:
+        - "application/xml"
+        - "application/json"
+      parameters:
+        - in: "path"
+          name: "slug"
+          required: true
+          type: "string"
+        - in: "body"
+          name: "body"
+          description: "The Tag object that needs to be updated to the DB"
+          required: true
+          schema:
+            $ref: "#/definitions/Tag"
+      responses:
+        "400":
+          description: "Bad Request"
+        "404":
+          description: "Topic Not Fount"
+definitions:
+  Topic:
+    type: "object"
+    required:
+      - "name"
+    properties:
+      name:
+        type: "string"
+      slug:
+        type: "string"
+  Tag:
+    type: "object"
+    required:
+      - "name"
+    properties:
+      name:
+        type: "string"
+      slug:
+        type: "string"
+      topics:
+        type: "array"
+        items:
+          type: "string"
