@@ -35,8 +35,8 @@ exports.errorHandler = error => {
             default:
                 message = 'Something went wrong';
         }
-    } 
-    else {
+    } else {
+        console.dir(error, {depth: null});
         for (let errorName in error.errorors) {
             if (error.errorors[errorName].message) message = error.errorors[errorName].message;
         }

@@ -10,8 +10,7 @@ const {
     read,
     update,
     remove,
-    photo, 
-    listSearch 
+    photo
 } = require("../controllers/controllerBlog");
 
 const { 
@@ -21,17 +20,16 @@ const {
     canUpdateDeleteBlog 
 } = require("../controllers/controllerAuth");
 
-router.get("/blog/:slug", read);
+router.post("/blogs", controllerRequireSignin, create); //TODO put back the middleware
 router.get("/blogs", list);
+router.get("/blogs/:slug", read);
+router.put("/blogs/:slug", controllerRequireSignin, adminMiddleware, update);
+router.delete("/blogs/:slug", controllerRequireSignin, adminMiddleware, remove);
+
 router.post("/blogs-categories-tags", listBlogsCatTag);
 router.post('/blogs/related', listRelated);
 router.get("/:username/blogs", listByUser);
-router.get("/blog/photo/:slug", photo);
-router.get("/blogs/search", listSearch);
-
-router.post("/blog", controllerRequireSignin, adminMiddleware, create);
-router.put("/blog/:slug", controllerRequireSignin, adminMiddleware, update);
-router.delete("/blog/:slug", controllerRequireSignin, adminMiddleware, remove);
+router.get("/blogs/photo/:slug", photo);
 
 router.post("/user/blog", controllerRequireSignin, authMiddleware, create);
 router.put("/user/blog/:slug", controllerRequireSignin, authMiddleware, canUpdateDeleteBlog, update);
