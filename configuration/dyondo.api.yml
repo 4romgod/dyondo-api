@@ -31,6 +31,8 @@ paths:
       responses:
         "200":
           description: "Success"
+        "400":
+          description: "Bad Request"
     get:
       summary: "Get all the Topics"
       description: "Get all the Topics"
@@ -73,7 +75,7 @@ paths:
           description: "Topic Not Found"
     delete:
       summary: "Delete A Topic by the slug"
-      description: "Get A Topic by the slug"
+      description: "Delete A Topic by the slug"
       tags:
         - Dyondo
       operationId: "DeleteRemoveTopic"
@@ -86,6 +88,8 @@ paths:
           required: true
           type: "string"
       responses:
+        "200":
+          description: "Success"
         "400":
           description: "Bad Request"
         "404":
@@ -113,6 +117,8 @@ paths:
       responses:
         "200":
           description: "Success"
+        "400":
+          description: "Bad Request"
     get:
       summary: "Get all the Tags"
       description: "Get all the Tags"
@@ -120,8 +126,8 @@ paths:
         - Dyondo
       operationId: "GetRetrieveTags"
       parameters:
-        - name: "topic"
-          in: "query"
+        - in: "query"
+          name: "topic"
           description: "Topic slug of the Tags to be returned"
           required: false
           type: "string"
@@ -180,10 +186,179 @@ paths:
           schema:
             $ref: "#/definitions/Tag"
       responses:
+        "200":
+          description: "Success"
         "400":
           description: "Bad Request"
         "404":
           description: "Topic Not Fount"
+    delete:
+      summary: "Delete A Tag by the slug"
+      description: "Delete A Tag by the slug"
+      tags:
+        - Dyondo
+      operationId: "DeleteRemoveTag"
+      produces:
+        - "application/xml"
+        - "application/json"
+      parameters:
+        - name: "slug"
+          in: "path"
+          required: true
+          type: "string"
+      responses:
+        "200":
+          description: "Success"
+        "400":
+          description: "Bad Request"
+        "404":
+          description: "Topic Not Fount"
+  /blogs:
+    post:
+      summary: "A blog is like an article talking about a particular topic"
+      description: "A blog is like an article talking about a particular topic"
+      tags:
+        - Dyondo
+      operationId: "PostCreateBlog"
+      consumes:
+        - "application/json"
+        - "application/xml"
+      produces:
+        - "application/xml"
+        - "application/json"
+      parameters:
+        - in: "body"
+          name: "body"
+          description: "The Blog object that needs to be added to the DB"
+          required: true
+          schema:
+            $ref: "#/definitions/Blog"
+      responses:
+        "200":
+          description: "Success"
+        "400":
+          description: "Success"
+    get:
+      summary: "Get all the Blogs"
+      description: "Get all the Blogs"
+      tags:
+        - Dyondo
+      operationId: "GetRetrieveBlogs"
+      parameters:
+        - in: "query"
+          name: "tag"
+          description: "Slug of the Tag used to tag the blogs"
+          required: false
+          type: "string"
+        - in: "query"
+          name: "author"
+          description: "username of the author that wrote the blogs"
+          required: false
+          type: "string"
+      consumes:
+        - "application/json"
+        - "application/xml"
+      produces:
+        - "application/xml"
+        - "application/json"
+      responses:
+        "200":
+          description: "Success"
+  /blogs/{slug}:
+    get:
+      summary: "Get A Blog by the slug"
+      description: "Get A Blog by the slug"
+      tags:
+        - Dyondo
+      operationId: "GetRetrieveBlog"
+      produces:
+        - "application/xml"
+        - "application/json"
+      parameters:
+        - in: "path"
+          name: "slug"
+          description: "Slug of the Blog to be returned"
+          required: true
+          type: "string"
+      responses:
+        "200":
+          description: "success"
+          schema:
+            $ref: "#/definitions/Blog"
+        "400":
+          description: "Bad Request"
+        "404":
+          description: "Blog Not Found"
+    put:
+      summary: "Update A Blog by the slug"
+      description: "Update A Blog by the slug"
+      tags:
+        - Dyondo
+      operationId: "PutUpdateBlog"
+      produces:
+        - "application/xml"
+        - "application/json"
+      parameters:
+        - in: "path"
+          name: "slug"
+          required: true
+          type: "string"
+        - in: "body"
+          name: "body"
+          description: "The Blog object that needs to be updated to the DB"
+          required: true
+          schema:
+            $ref: "#/definitions/Blog"
+      responses:
+        "200":
+          description: "Success"
+        "400":
+          description: "Bad Request"
+        "404":
+          description: "Topic Not Fount"
+    delete:
+      summary: "Delete A Blog by the slug"
+      description: "Delete A Blog by the slug"
+      tags:
+        - Dyondo
+      operationId: "DeleteRemoveBlog"
+      produces:
+        - "application/xml"
+        - "application/json"
+      parameters:
+        - name: "slug"
+          in: "path"
+          required: true
+          type: "string"
+      responses:
+        "200":
+          description: "Success"
+        "400":
+          description: "Bad Request"
+        "404":
+          description: "Blog Not Fount"
+  /blogs/search:
+    get:
+      summary: "Search all the Blogs"
+      description: "Search all the Blogs"
+      tags:
+        - Dyondo
+      operationId: "GetSearchBlogs"
+      parameters:
+        - in: "query"
+          name: "search"
+          description: "Search term for the blogs"
+          required: true
+          type: "string"
+      consumes:
+        - "application/json"
+        - "application/xml"
+      produces:
+        - "application/xml"
+        - "application/json"
+      responses:
+        "200":
+          description: "Success"
 definitions:
   Topic:
     type: "object"
@@ -207,3 +382,8 @@ definitions:
         type: "array"
         items:
           type: "string"
+  Blog:
+    type: "object"
+    properties:
+      title:
+        type: "string"
