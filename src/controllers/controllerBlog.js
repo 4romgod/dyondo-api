@@ -185,12 +185,11 @@ const performSearch = (req, res, searchTerm) => {
         ]
     }
     Blog.find(searchQuery, (err, blogs) => {
-        
         if (err) {
             return res.status(BAD_REQUEST).json({ error: errorHandler(err) });
         }
 
-        return res.status(SUCCESS).json({ data: blogs });
+        return res.status(SUCCESS).json(blogs);
     }).select('-photo -body');
 }
 
@@ -202,7 +201,7 @@ const performList = async (req, res, query) => {
             if (tagRes) {
                 searchQuery.$or.push({ tags: tagRes._id });
             } else {
-                return res.status(SUCCESS).json({ data: [] });
+                return res.status(SUCCESS).json([]);
             }
         }
 
@@ -211,7 +210,7 @@ const performList = async (req, res, query) => {
             if (userRes) {
                 searchQuery.$or.push({ author: userRes._id });
             } else {
-                return res.status(SUCCESS).json({ data: [] });
+                return res.status(SUCCESS).json([]);
             }
         }
 
@@ -226,7 +225,7 @@ const performList = async (req, res, query) => {
                     return res.status(BAD_REQUEST).json({ error: errorHandler(err) });
                 }
 
-                return res.status(SUCCESS).json({ data: blogs });
+                return res.status(SUCCESS).json(blogs);
             });
     } catch (err) {
         console.log(err);

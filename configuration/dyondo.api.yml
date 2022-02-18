@@ -255,6 +255,11 @@ paths:
           description: "username of the author that wrote the blogs"
           required: false
           type: "string"
+        - in: "query"
+          name: "search"
+          description: "Term used to search the blog"
+          required: false
+          type: "string"
       consumes:
         - "application/json"
         - "application/xml"
@@ -337,28 +342,6 @@ paths:
           description: "Bad Request"
         "404":
           description: "Blog Not Fount"
-  /blogs/search:
-    get:
-      summary: "Search all the Blogs"
-      description: "Search all the Blogs"
-      tags:
-        - Dyondo
-      operationId: "GetSearchBlogs"
-      parameters:
-        - in: "query"
-          name: "search"
-          description: "Search term for the blogs"
-          required: true
-          type: "string"
-      consumes:
-        - "application/json"
-        - "application/xml"
-      produces:
-        - "application/xml"
-        - "application/json"
-      responses:
-        "200":
-          description: "Success"
 definitions:
   Topic:
     type: "object"

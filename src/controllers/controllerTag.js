@@ -66,7 +66,7 @@ exports.read = (req, res) => {
             return res.status(BAD_REQUEST).json({ error: errorHandler(err) });
         }
 
-        return res.status(SUCCESS).json({tag});
+        return res.status(SUCCESS).json(tag);
     });
 }
 
