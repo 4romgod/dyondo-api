@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "nodemon src/index.js",
     "start": "node src/index.js",
-    "test": "./node_modules/mocha/bin/mocha test/**/*.js -r dotenv/config --reporter mochawesome --reporter-options reportDir=test-results,reportFilename=test-results",
+    "test": "./node_modules/mocha/bin/mocha test/**/*.js -r dotenv/config --reporter mochawesome --reporter-options reportDir=test-results,reportFilename=test-results --exit",
     "clean": "rm -rf node_modules",
     "lint": "eslint lib/* test/* --ext .ts --fix"
   },
