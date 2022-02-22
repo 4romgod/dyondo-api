@@ -12,7 +12,7 @@ jobs:
       - run:
           name: Run Unit Tests
           command: |
-            ./node_modules/mocha test/**/*.js -r dotenv/config
+            ./node_modules/mocha/bin/mocha test/**/*.js -r dotenv/config
 workflows:
   build_test:
     jobs:
