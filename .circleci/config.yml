@@ -2,9 +2,11 @@ version: 2.1
 jobs:
   run_tests:
     docker:
-      - image: circleci/node:10 # the primary container, where your job's commands are run
+      - image: cimg/node:17.3.1
     steps:
-      - checkout 
+      - checkout
+      - run: 
+          node --version
       - run:
           name: Install npm dependencies
           command: |
@@ -12,7 +14,11 @@ jobs:
       - run:
           name: Run Unit Tests
           command: |
-            ./node_modules/mocha/bin/mocha test/**/*.js -r dotenv/config
+            npm run test
+      - store_test_results:
+          path: test-results
+      - store_artifacts:
+          path: test-results
 workflows:
   build_test:
     jobs:
