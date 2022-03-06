@@ -11,6 +11,7 @@ const { smartTrim } = require("../helpers/blogHandler");
 const fs = require("fs");
 const path = require('path');
 const { SUCCESS, BAD_REQUEST, TOO_LARGE } = require("../constants").STATUS_CODES;
+require("dotenv").config();
 
 exports.create = (req, res) => {
     const form = new formidable.IncomingForm();

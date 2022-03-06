@@ -1,8 +1,9 @@
 const https = require("https");
 const sgMail = require('@sendgrid/mail');
-sgMail.setApiKey(process.env.SENDGRID_API_KEY);
-
 const transporter = require("../../config");
+require("dotenv").config();
+
+sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
 // contact me
 exports.contactForm = (req, res) => {

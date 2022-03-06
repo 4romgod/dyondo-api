@@ -2,6 +2,7 @@ const Category = require("../models/category");
 const Blog = require("../models/blog");
 const slugify = require("slugify");
 const { errorHandler } = require("../helpers/dbErrorHandler");
+require("dotenv").config();
 
 exports.create = function (req, res) {
     const { name } = req.body;

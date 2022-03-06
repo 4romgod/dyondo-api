@@ -4,17 +4,9 @@ const bodyParser = require("body-parser");
 const cookieParser = require("cookie-parser");
 const cors = require("cors");
 const mongoose = require("mongoose");
-require("dotenv").config();
-const routeBlog = require("./routes/routeBlog");
-const routeAuth = require("./routes/routeAuth");
-const routeUser = require("./routes/routeUser");
-const routeCat = require("./routes/routeCat");
-const routeTopic = require("./routes/routeTopic");
-const routeTag = require("./routes/routeTag");
-const routeContact = require("./routes/routeContact");
-const routeSitemap = require("./routes/routeSitemap");
-const routeApiSpec = require("./routes/routeApiSpec");
+const routes = require("./routes");
 const bootstrap = require("./bootstrapData/bootstrapData");
+require("dotenv").config();
 
 const app = express();
 
@@ -37,15 +29,15 @@ if (process.env.NODE_ENV === 'development') {
     app.use(cors({ origin: `${process.env.CLIENT_URL}` }));
 }
 
-app.use("/api", routeAuth);
-app.use("/api", routeBlog);
-app.use("/api", routeUser);
-app.use("/api", routeCat);
-app.use("/api", routeTag);
-app.use("/api", routeTopic);
-app.use("/api", routeContact);
-app.use("/api", routeSitemap);
-app.use("/api", routeApiSpec);
+app.use("/api", routes.routeAuth);
+app.use("/api", routes.routeBlog);
+app.use("/api", routes.routeUser);
+app.use("/api", routes.routeCat);
+app.use("/api", routes.routeTag);
+app.use("/api", routes.routeTopic);
+app.use("/api", routes.routeContact);
+app.use("/api", routes.routeSitemap);
+app.use("/api", routes.routeApiSpec);
 
 const port = process.env.PORT || 8000;
 app.listen(port, function () {

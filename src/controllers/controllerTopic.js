@@ -4,6 +4,7 @@ const slugify = require("slugify");
 const fs = require("fs");
 const { errorHandler } = require("../helpers/dbErrorHandler");
 const { SUCCESS, BAD_REQUEST } = require("../constants").STATUS_CODES;
+require("dotenv").config();
 
 exports.create = (req, res) => {
     const { name } = req.body;

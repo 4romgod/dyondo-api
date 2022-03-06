@@ -3,6 +3,7 @@ const Topic = require("../models/topic");
 const slugify = require("slugify");
 const { errorHandler } = require("../helpers/dbErrorHandler");
 const { SUCCESS, BAD_REQUEST } = require("../constants").STATUS_CODES;
+require("dotenv").config();
 
 exports.create = (req, res) => {
     const { name, topics } = req.body;

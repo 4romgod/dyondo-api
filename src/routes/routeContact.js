@@ -1,19 +1,12 @@
 const express = require("express");
 const router = express.Router();
-
-// Controllers Form
-const { contactForm, contactNodemailer, contactBlogAuthorForm, newsletter } = require("../controllers/controllerForm");
-
-// Validators
-const {isValidated} = require("../validators/authValidator");
+const { contactNodemailer, contactBlogAuthorForm, newsletter } = require("../controllers/controllerForm");
 const { contactFormValidator } = require("../validators/contactValidationRules");
+const { isValidated } = require("../validators/authValidator");
 
-
-// Routes
 router.post("/contact", contactFormValidator,  contactNodemailer);
 router.post("/contact-blog-author", contactFormValidator, isValidated,  contactBlogAuthorForm);
 router.post("/newsletter", newsletter);
-
 
 module.exports = router;
 

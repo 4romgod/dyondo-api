@@ -9,6 +9,7 @@ const { OAuth2Client } = require("google-auth-library");
 const { SUCCESS, CONFLICT, GONE, SERVER_ERROR, UNAUTHENTICATED, UNAUTHORIZED, NOT_FOUND, BAD_REQUEST } = require("../constants").STATUS_CODES;
 const sgMail = require('@sendgrid/mail');
 sgMail.setApiKey(process.env.SENDGRID_API_KEY);
+require("dotenv").config();
 
 exports.controllerPreSignup = (req, res) => {
     const { name, surname, email, password } = req.body;

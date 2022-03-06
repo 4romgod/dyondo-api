@@ -5,6 +5,7 @@ const formidable = require("formidable");
 const fs = require('fs');
 const { errorHandler } = require("../helpers/dbErrorHandler");
 const path = require('path');
+require("dotenv").config();
 
 exports.read = (req, res) => {
     const user = req.profile;
