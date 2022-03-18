@@ -11,7 +11,7 @@ const sgMail = require('@sendgrid/mail');
 sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 require("dotenv").config();
 
-exports.controllerPreSignup = (req, res) => {
+const controllerPreSignup = (req, res) => {
     const { name, surname, email, password } = req.body;
 
     User.findOne({ email: email.toLowerCase() }, (err, user) => {
@@ -44,7 +44,7 @@ exports.controllerPreSignup = (req, res) => {
     });
 };
 
-exports.controllerSignup = (req, res) => {
+const controllerSignup = (req, res) => {
     const token = req.body.token;
     if (token) {
         verify(token, process.env.JWT_ACCOUNT_ACTIVATION, function (err, decoded) {
@@ -66,11 +66,11 @@ exports.controllerSignup = (req, res) => {
             });
         });
     } else {
-        return res.status(UNAUTHENTICATED).json({ message: "Authentication Token Has Not Been Provided." });
+        return res.status(UNAUTHENTICATED).json({ message: "Not Authenticated" });
     }
 }
 
-exports.controllerSignin = (req, res) => {
+const controllerSignin = (req, res) => {
     const { email, password } = req.body;
     User.findOne({ email }).exec((err, user) => {
         if (err || !user) {
@@ -89,7 +89,7 @@ exports.controllerSignin = (req, res) => {
     });
 };
 
-exports.controllerSignout = (req, res) => {
+const controllerSignout = (req, res) => {
     res.clearCookie("token");
     res.status(SUCCESS).json({ message: 'Signout Successfull!' });
 };
@@ -98,13 +98,13 @@ exports.controllerSignout = (req, res) => {
 // lets us know whether you are signed in or not
 // every request for signed in user contains this jwt
 // makes user available in the request
-exports.controllerRequireSignin = jwt({ secret: process.env.JWT_SECRET, algorithms: ['HS256'] });
+const controllerRequireSignin = jwt({ secret: process.env.JWT_SECRET, algorithms: ['HS256'] });
 
-exports.authMiddleware = (req, res, next) => {
+const authMiddleware = (req, res, next) => {
     const authUserId = req.user._id;
     User.findById({ _id: authUserId }).exec((err, user) => {
         if (err || !user) {
-            return res.status(NOT_FOUND).json({ error: "User not found." });
+            return res.status(NOT_FOUND).json({ error: "Not Authenticated" });
         }
 
         req.profile = user;
@@ -112,15 +112,15 @@ exports.authMiddleware = (req, res, next) => {
     });
 }
 
-exports.adminMiddleware = (req, res, next) => {
+const adminMiddleware = (req, res, next) => {
     const adminUserId = req.user._id;
     User.findById({ _id: adminUserId }).exec((err, user) => {
         if (err || !user) {
             return res.status(NOT_FOUND).json({ error: "User not found." });
         }
 
-        if (user.role != 1) {
-            return res.status(UNAUTHORIZED).json({ error: "Access denied." });
+        if (user.role !== 1) {
+            return res.status(UNAUTHORIZED).json({ error: "Not Authorized" });
         }
 
         req.profile = user;
@@ -128,23 +128,25 @@ exports.adminMiddleware = (req, res, next) => {
     });
 }
 
-exports.canUpdateDeleteBlog = (req, res, next) => {
+const canUpdateDeleteBlog = (req, res, next) => {
     const slug = req.params.slug.toLowerCase();
+    console.log(req.profile)
     Blog.findOne({ slug }).exec((err, data) => {
         if (err) {
             return res.status(BAD_REQUEST).json({ error: errorHandler(err) });
         }
 
-        let authorizedUser = (data.author._id.toString() === req.profile._id.toString());
-        if (!authorizedUser) {
-            return res.status(UNAUTHORIZED).json({ error: "You Are Not Authorized" });
+        const authorizedUser = (data.author._id.toString() === req.profile._id.toString());
+        const adminUser = (req.profile.role === 1);
+        if (!authorizedUser && !adminUser) {
+            return res.status(UNAUTHORIZED).json({ error: "Not Authorized" });
         }
 
         next();
     });
 }
 
-exports.controllerForgotPassword = (req, res) => {
+const controllerForgotPassword = (req, res) => {
     const { email } = req.body;
     User.findOne({ email }, (err, user) => {
         if (err || !user) {
@@ -180,7 +182,7 @@ exports.controllerForgotPassword = (req, res) => {
     });
 }
 
-exports.controllerResetPassword = (req, res) => {
+const controllerResetPassword = (req, res) => {
     const { resetPasswordLink, newPassword } = req.body;
 
     if (resetPasswordLink) {
@@ -209,7 +211,7 @@ exports.controllerResetPassword = (req, res) => {
 }
 
 const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
-exports.googleLogin = (req, res) => {
+const googleLogin = (req, res) => {
     const idToken = req.body.tokenId;
 
     client.verifyIdToken({ idToken, audience: process.env.GOOGLE_CLIENT_ID }).then(response => {
@@ -244,4 +246,18 @@ exports.googleLogin = (req, res) => {
             return res.status(UNAUTHENTICATED).json({ error: "Google login failed. Try again!" });
         }
     });
+}
+
+module.exports = {
+    controllerPreSignup,
+    controllerSignup,
+    controllerSignin,
+    controllerSignout,
+    controllerRequireSignin,
+    authMiddleware,
+    adminMiddleware,
+    canUpdateDeleteBlog,
+    controllerForgotPassword,
+    controllerResetPassword,
+    googleLogin
 }
