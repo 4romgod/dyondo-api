@@ -10,7 +10,7 @@ const { errorHandler } = require("../helpers/dbErrorHandler");
 const { smartTrim } = require("../helpers/blogHandler");
 const fs = require("fs");
 const path = require('path');
-const { SUCCESS, BAD_REQUEST, TOO_LARGE } = require("../constants").STATUS_CODES;
+const { SUCCESS, BAD_REQUEST, TOO_LARGE, NOT_FOUND } = require("../constants").STATUS_CODES;
 require("dotenv").config();
 
 exports.create = (req, res) => {
@@ -79,12 +79,12 @@ exports.create = (req, res) => {
 
 exports.list = async (req, res) => {
     console.log(`queryString: ${JSON.stringify(req.query)}`);
-    const { search="",  tag, author, limit = 10, skip = 0 } = req.query;
-    
+    const { search = "", tag, author, limit = 10, skip = 0 } = req.query;
+
     if (search) {
         performSearch(req, res, search)
     } else {
-        await performList(req, res, {tag, author, limit, skip});
+        await performList(req, res, { tag, author, limit, skip });
     }
 }
 
@@ -175,61 +175,47 @@ exports.remove = (req, res) => {
         });
 }
 
-const performSearch = (req, res, searchTerm) => {
-    const searchQuery = {
-        $or: [
-            { title: { $regex: searchTerm, $options: 'i' } },
-            { body: { $regex: searchTerm, $options: 'i' } },
-            { tags: { $elemMatch: { name: searchTerm } } }
-        ]
-    }
-    Blog.find(searchQuery, (err, blogs) => {
+exports.listRelated = (req, res) => {
+    let limit = req.body.limit ? parseInt(req.body.limit) : 3;
+    const slug = req.params.slug && slugify(req.params.slug).toLowerCase();
+
+    Blog.findOne({ slug }).exec((err, data) => {
+        if (err) {
+            return res.status(NOT_FOUND).json({ error: "Provided blog does not exist" });
+        }
+
+        Blog.find({ _id: { $ne: data._id }, tags: { $in: data.tags } })
+            .limit(limit)
+            .populate('author', '_id name username profile')
+            .select('title slug excerpt author createdAt updatedAt')
+            .exec((err, blogs) => {
+                if (err) {
+                    return res.status(NOT_FOUND).json({ error: "Blogs not found" });
+                }
+                return res.status(SUCCESS).json(blogs);
+            });
+    });
+};
+
+exports.listByUser = (req, res) => {
+    User.findOne({ username: req.params.username }).exec((err, user) => {
         if (err) {
             return res.status(BAD_REQUEST).json({ error: errorHandler(err) });
         }
+        const userId = user._id;
 
-        return res.status(SUCCESS).json(blogs);
-    }).select('-photo -body');
-}
-
-const performList = async (req, res, query) => {
-    try {
-        let searchQuery = { $or: [] };
-        if (query.tag) {
-            const tagRes = await Tag.findOne({ slug: query.tag });
-            if (tagRes) {
-                searchQuery.$or.push({ tags: tagRes._id });
-            } else {
-                return res.status(SUCCESS).json([]);
-            }
-        }
-
-        if (query.author) {
-            const userRes = await User.findOne({ username: query.author });
-            if (userRes) {
-                searchQuery.$or.push({ author: userRes._id });
-            } else {
-                return res.status(SUCCESS).json([]);
-            }
-        }
-
-        Blog.find({ ...(searchQuery.$or.length > 0 && searchQuery) })
-            .skip(query.skip)
-            .limit(query.limit)
-            .populate('author', '_id name username profile')
-            .populate('tags', '_id slug name topics')
-            .exec((err, blogs) => {
+        Blog.find({ author: userId })
+            .populate("tags", "_id name slug")
+            .populate("author", "_id name username")
+            .select("_id title slug author createdAt updatedAt")
+            .exec((err, data) => {
                 if (err) {
-                    console.log(err)
                     return res.status(BAD_REQUEST).json({ error: errorHandler(err) });
                 }
 
-                return res.status(SUCCESS).json(blogs);
+                return res.status(SUCCESS).json(data);
             });
-    } catch (err) {
-        console.log(err);
-        return res.status(BAD_REQUEST).json({ error: errorHandler(err) });
-    }
+    });
 }
 
 // LIST LIMITED NUMBER OF BLOGS {pagination}, ALL CATS AND TAGS
@@ -297,54 +283,6 @@ exports.listBlogsCatTag = (req, res) => {
         });
 }
 
-
-// LIST RELATED BLOGS
-exports.listRelated = (req, res) => {
-    //console.log(req.body.blog);
-    let limit = req.body.limit ? parseInt(req.body.limit) : 3;
-    const { _id, tags } = req.body.blog;
-
-    Blog.find({ _id: { $ne: _id }, tags: { $in: tags } })
-        .limit(limit)
-        .populate('author', '_id name username profile')
-        .select('title slug excerpt author createdAt updatedAt')
-        .exec((err, blogs) => {
-            if (err) {
-                return res.status(400).json({
-                    error: 'Blogs not found'
-                });
-            }
-            res.json(blogs);
-        });
-};
-
-
-// TO GET BLOGS WRITTEN BY USER
-exports.listByUser = (req, res) => {
-    User.findOne({ username: req.params.username }).exec((err, user) => {
-        if (err) {
-            return res.status(400).json({
-                error: errorHandler(err)
-            });
-        }
-        let userId = user._id;
-
-        Blog.find({ author: userId })
-            .populate('categories', '_id name slug')
-            .populate('tags', '_id name slug')
-            .populate("author", "_id name username")
-            .select("_id title slug author createdAt updatedAt")
-            .exec((err, data) => {
-                if (err) {
-                    res.status(400).json({
-                        error: errorHandler(err)
-                    });
-                }
-                res.json(data);
-            });
-    });
-}
-
 exports.photo = (req, res) => {
     let slug = req.params.slug;
     slug = slug.toLowerCase();
@@ -367,4 +305,61 @@ exports.photo = (req, res) => {
                 return res.sendFile(path.resolve("public/blog.png"));
             }
         });
+}
+
+const performSearch = (req, res, searchTerm) => {
+    const searchQuery = {
+        $or: [
+            { title: { $regex: searchTerm, $options: 'i' } },
+            { body: { $regex: searchTerm, $options: 'i' } },
+            { tags: { $elemMatch: { name: searchTerm } } }
+        ]
+    }
+    Blog.find(searchQuery, (err, blogs) => {
+        if (err) {
+            return res.status(BAD_REQUEST).json({ error: errorHandler(err) });
+        }
+
+        return res.status(SUCCESS).json(blogs);
+    }).select('-photo -body');
+}
+
+const performList = async (req, res, query) => {
+    try {
+        let searchQuery = { $or: [] };
+        if (query.tag) {
+            const tagRes = await Tag.findOne({ slug: query.tag });
+            if (tagRes) {
+                searchQuery.$or.push({ tags: tagRes._id });
+            } else {
+                return res.status(SUCCESS).json([]);
+            }
+        }
+
+        if (query.author) {
+            const userRes = await User.findOne({ username: query.author });
+            if (userRes) {
+                searchQuery.$or.push({ author: userRes._id });
+            } else {
+                return res.status(SUCCESS).json([]);
+            }
+        }
+
+        Blog.find({ ...(searchQuery.$or.length > 0 && searchQuery) })
+            .skip(query.skip)
+            .limit(query.limit)
+            .populate('author', '_id name username profile')
+            .populate('tags', '_id slug name topics')
+            .exec((err, blogs) => {
+                if (err) {
+                    console.log(err)
+                    return res.status(BAD_REQUEST).json({ error: errorHandler(err) });
+                }
+
+                return res.status(SUCCESS).json(blogs);
+            });
+    } catch (err) {
+        console.log(err);
+        return res.status(BAD_REQUEST).json({ error: errorHandler(err) });
+    }
 }
