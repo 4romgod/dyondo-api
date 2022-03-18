@@ -72,8 +72,8 @@ exports.update = (req, res) => {
                 return res.status(400).json({ error: "Image should be less than 1MB" });
             }
 
-            user.photo.data = fs.readFileSync(files.photo.path);
-            user.photo.contentType = files.photo.type;
+            user.photo.data = fs.readFileSync(files.photo.filepath);
+            user.photo.contentType = files.photo.mimetype;
         }
 
         user.save((err, result) => {

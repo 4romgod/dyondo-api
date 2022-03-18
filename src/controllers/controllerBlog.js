@@ -31,9 +31,9 @@ exports.create = (req, res) => {
             return res.status(BAD_REQUEST).json({ error: "Content is too short" });
         }
 
-        if (!tags || !tags.length === 0) {
-            return res.status(BAD_REQUEST).json({ error: "Atleast one tag is required" });
-        }
+        // if (!tags || !tags.length === 0) {
+        //     return res.status(BAD_REQUEST).json({ error: "Atleast one tag is required" });
+        // }
 
         const blog = new Blog();
         blog.title = title;
@@ -55,8 +55,8 @@ exports.create = (req, res) => {
             }
 
             console.log(`Reading file...`)
-            blog.photo.data = fs.readFileSync(files.photo.path);
-            blog.photo.contentType = files.photo.type;
+            blog.photo.data = fs.readFileSync(files.photo.filepath);
+            blog.photo.contentType = files.photo.mimetype;
         }
 
         blog.save((err, result) => {
@@ -140,17 +140,15 @@ exports.update = (req, res) => {
                     oldBlog.desc = stripHtml(body.substring(0, 160));
                 }
 
-                if (tags) {
-                    oldBlog.tags = tags.split(',');
-                }
+                oldBlog.tags = tags && tags.split(',');
 
                 if (files.photo) {
                     if (files.photo.size > 10000000) {
                         return res.status(BAD_REQUEST).json({ error: "Image should be less than 1MB in size" });
                     }
 
-                    oldBlog.photo.data = fs.readFileSync(files.photo.path);
-                    oldBlog.photo.contentType = files.photo.type;
+                    oldBlog.photo.data = fs.readFileSync(files.photo.filepath);
+                    oldBlog.photo.contentType = files.photo.mimetype;
                 }
 
                 oldBlog.save((err, result) => {
@@ -347,7 +345,6 @@ exports.listByUser = (req, res) => {
     });
 }
 
-// TO GET A PHOTO BY SLUG
 exports.photo = (req, res) => {
     let slug = req.params.slug;
     slug = slug.toLowerCase();
@@ -364,12 +361,10 @@ exports.photo = (req, res) => {
             if (blog.photo.data) {
                 res.set("Content-Type", blog.photo.contentType);
                 return res.send(blog.photo.data);
-            }
-            else {
+            } else {
                 res.set("Content-Type", "image/png");
                 res.set('Content-Disposition', 'attachment; filename=defaltImage');
                 return res.sendFile(path.resolve("public/blog.png"));
-
             }
         });
 }
