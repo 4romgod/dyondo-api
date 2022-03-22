@@ -1,0 +1,20 @@
+get:
+  summary: Get a User photo by their username
+  description: Get a User photo by their username
+  tags:
+    - Dyondo
+  operationId: GetRetrieveUserPhoto
+  parameters:
+    - in: path
+      name: username
+      description: username of the User
+      required: true
+      schema:
+        type: string
+  responses:
+    "200":
+      description: success
+    "400":
+      description: Bad Request
+    "404":
+      description: User Image Not Found

@@ -47,7 +47,7 @@ put:
     "400":
       description: Bad Request
     "404":
-      description: Topic Not Fount
+      description: Topic Not Found
 delete:
   summary: Delete A Blog by the slug
   description: Delete A Blog by the slug

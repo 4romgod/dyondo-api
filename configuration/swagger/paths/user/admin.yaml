@@ -1,0 +1,13 @@
+get:
+  summary: Get a User from the request profile
+  description: Get a User from the request profile
+  tags:
+    - Dyondo
+  operationId: GetRetrieveAdminProfile
+  responses:
+    "200":
+      description: success
+    "400":
+      description: Bad Request
+    "404":
+      description: User Not Found

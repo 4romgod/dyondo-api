@@ -1,0 +1,46 @@
+get:
+  summary: Get a User by their username
+  description: Get a User by their username
+  tags:
+    - Dyondo
+  operationId: GetRetrieveUser
+  parameters:
+    - in: path
+      name: username
+      description: username of the User
+      required: true
+      schema:
+        type: string
+  responses:
+    "200":
+      description: success
+    "400":
+      description: Bad Request
+    "404":
+      description: User Not Found
+put:
+  summary: Update A User by their username
+  description: Update A User by their username
+  tags:
+    - Dyondo
+  operationId: PutUpdateUser
+  requestBody:
+    required: true
+    description: The User object that needs to be updated to the DB
+    content:
+      application/json:
+        schema:
+          $ref: "#/components/schemas/User"
+  parameters:
+    - in: path
+      name: username
+      required: true
+      schema:
+        type: string
+  responses:
+    "200":
+      description: Success
+    "400":
+      description: Bad Request
+    "404":
+      description: Topic Not Found

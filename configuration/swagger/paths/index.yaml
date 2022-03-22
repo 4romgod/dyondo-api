@@ -20,3 +20,12 @@
   $ref: topic/topics.yaml
 /topics/{slug}:
   $ref: topic/topicsSlug.yaml
+
+/users/{username}:
+  $ref: user/usersUsername.yaml
+/users/{username}/photo:
+  $ref: user/usersUsernamePhoto.yaml
+/users/profile/read:
+  $ref: user/usersProfileRead.yaml
+/admin:
+  $ref: user/admin.yaml
