@@ -26,7 +26,10 @@ app.use(bodyParser.urlencoded({ limit: '50mb', extended: true }));
 app.use(express.static("public"));
 
 if (process.env.NODE_ENV === 'development') {
-    app.use(cors({ origin: `${process.env.CLIENT_URL}` }));
+    app.use(cors({
+        origin: `${process.env.CLIENT_URL}`,
+        credentials: true
+    }));
 }
 
 app.use("/api", routes.routeAuth);

@@ -1,0 +1,36 @@
+post:
+  summary: "A tag that a blog has, e.g Java, Python, CircleCi, etc."
+  description: "A tag that a blog has, e.g Java, Python, CircleCi, etc."
+  security:
+    - BearerAuth: []
+  tags:
+    - Dyondo
+  operationId: "PostCreateTag"
+  requestBody:
+    required: true
+    description: "The Tag object that needs to be added to the DB"
+    content:
+      application/json:
+        schema:
+          $ref: "#/components/schemas/Tag"
+  responses:
+    "200":
+      description: "Success"
+    "400":
+      description: "Bad Request"
+get:
+  summary: "Get all the Tags"
+  description: "Get all the Tags"
+  tags:
+    - Dyondo
+  operationId: "GetRetrieveTags"
+  parameters:
+    - in: "query"
+      name: "topic"
+      description: "Topic slug of the Tags to be returned"
+      required: false
+      schema:
+        type: "string"
+  responses:
+    "200":
+      description: "Success"

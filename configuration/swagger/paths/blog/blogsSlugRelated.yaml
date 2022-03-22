@@ -1,0 +1,20 @@
+get:
+  summary: Get all Blogs related to the provided Blog/slug
+  description: Get all Blogs related to the provided Blog/slug
+  tags:
+    - Dyondo
+  operationId: GetRetrieveRelatedBlogs
+  parameters:
+    - in: path
+      name: slug
+      description: Slug of the Blog related to the retrieved Blogs
+      required: true
+      schema:
+        type: string
+  responses:
+    "200":
+      description: success
+    "400":
+      description: Bad Request
+    "404":
+      description: Blog Not Found

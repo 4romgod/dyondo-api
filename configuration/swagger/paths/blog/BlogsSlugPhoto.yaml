@@ -1,0 +1,20 @@
+get:
+  summary: Get the main image of a Blog
+  description: Get the main image of a Blog
+  tags:
+    - Dyondo
+  operationId: GetRetrieveBlogPhoto
+  parameters:
+    - in: path
+      name: slug
+      description: Slug of the Blog's image to be retrieved
+      required: true
+      schema:
+        type: string
+  responses:
+    "200":
+      description: success
+    "400":
+      description: Bad Request
+    "404":
+      description: Blog Not Found

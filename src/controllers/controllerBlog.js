@@ -218,14 +218,11 @@ exports.listByUser = (req, res) => {
     });
 }
 
-// LIST LIMITED NUMBER OF BLOGS {pagination}, ALL CATS AND TAGS
-exports.listBlogsCatTag = (req, res) => {
+exports.listBlogsAndTags = (req, res) => {
     let limit = req.body.limit ? parseInt(req.body.limit) : 10;
     let skip = req.body.skip ? parseInt(req.body.skip) : 0;
 
-    let blogs;
-    let categories;
-    let tags;
+    let blogs, categories, tags;
 
     Blog.find({})
         .sort({ createdAt: -1 })
@@ -291,9 +288,7 @@ exports.photo = (req, res) => {
         .select('photo')
         .exec((err, blog) => {
             if (err || !blog) {
-                return res.status(400).json({
-                    error: errorHandler(err)
-                })
+                return res.status(400).json({error: errorHandler(err)});
             }
 
             if (blog.photo.data) {

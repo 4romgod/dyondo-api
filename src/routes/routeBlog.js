@@ -5,7 +5,7 @@ const {
     create,
     list,
     listByUser,
-    listBlogsCatTag,
+    listBlogsAndTags,
     listRelated,
     read,
     update,
@@ -24,11 +24,10 @@ router.get("/blogs/:slug", read);
 router.get("/blogs/:slug/related", listRelated);
 router.get("/blogs/:slug/photo", photo);
 router.get("/blogs/user/:username", listByUser);
+router.get("/blogs-and-tags", listBlogsAndTags);
 
 router.post("/blogs", controllerRequireSignin, authMiddleware, create);
 router.put("/blogs/:slug", controllerRequireSignin, authMiddleware, canUpdateDeleteBlog, update);
 router.delete("/blogs/:slug", controllerRequireSignin, authMiddleware, canUpdateDeleteBlog, remove);
-
-router.post("/blogs-categories-tags", listBlogsCatTag);
 
 module.exports = router;

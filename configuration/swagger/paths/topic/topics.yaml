@@ -1,0 +1,27 @@
+post:
+  summary: "A topic that a blog is about, e.g Programming, Security, etc."
+  description: "A topic that a blog is about, e.g Programming, Security, etc."
+  tags:
+    - Dyondo
+  operationId: "PostCreateTopic"
+  requestBody:
+    required: true
+    description: "The Topic object that needs to be added to the database"
+    content:
+      application/json:
+        schema:
+          $ref: "#/components/schemas/Topic"
+  responses:
+    "200":
+      description: "Success"
+    "400":
+      description: "Bad Request"
+get:
+  summary: "Get all the Topics"
+  description: "Get all the Topics"
+  tags:
+    - Dyondo
+  operationId: "GetRetrieveTopics"
+  responses:
+    "200":
+      description: "Success"

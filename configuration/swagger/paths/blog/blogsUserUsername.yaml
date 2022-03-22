@@ -1,0 +1,20 @@
+get:
+  summary: Get all Blogs authored by User
+  description: Get all Blogs authored by User
+  tags:
+    - Dyondo
+  operationId: GetRetrieveBlogsByUser
+  parameters:
+    - in: path
+      name: username
+      description: Username of the author of the Blogs to be retrieved
+      required: true
+      schema:
+        type: string
+  responses:
+    "200":
+      description: success
+    "400":
+      description: Bad Request
+    "404":
+      description: Blog Not Found

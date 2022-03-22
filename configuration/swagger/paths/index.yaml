@@ -1,0 +1,22 @@
+/blogs:
+  $ref: blog/blogs.yaml
+/blogs/{slug}:
+  $ref: blog/blogsSlug.yaml
+/blogs/{slug}/photo:
+  $ref: blog/blogsSlugPhoto.yaml
+/blogs/{slug}/related:
+  $ref: blog/blogsSlugRelated.yaml
+/blogs/user/{username}:
+  $ref: blog/blogsUserUsername.yaml
+/blogs-and-tags:
+  $ref: blog/blogs-and-tags.yaml
+
+/tags:
+  $ref: tag/tags.yaml
+/tags/{slug}:
+  $ref: tag/tagsSlug.yaml
+
+/topics:
+  $ref: topic/topics.yaml
+/topics/{slug}:
+  $ref: topic/topicsSlug.yaml

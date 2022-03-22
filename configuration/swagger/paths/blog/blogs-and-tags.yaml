@@ -1,0 +1,26 @@
+get:
+  summary: Get all Blogs and all Tags
+  description: Get all Blogs and all Tags
+  tags:
+    - Dyondo
+  operationId: GetRetrieveBlogsAndTags
+  parameters:
+    - in: query
+      name: limit
+      description: Number of Blogs and Tags to be returned per pagination
+      required: false
+      schema:
+        type: string
+    - in: query
+      name: skip
+      description: Number of Blogs and Tags to be skipped per pagination
+      required: false
+      schema:
+        type: string
+  responses:
+    "200":
+      description: success
+    "400":
+      description: Bad Request
+    "404":
+      description: Blog Not Found
