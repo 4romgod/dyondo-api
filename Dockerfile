@@ -1,4 +1,4 @@
-FROM node:latest
+FROM public.ecr.aws/b1k8j0m8/node
 RUN mkdir -p /usr/src/app
 WORKDIR /usr/src/app
 COPY . ./
