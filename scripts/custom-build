@@ -1,0 +1,8 @@
+#!/bin/bash
+
+build_model() {
+    echo "Building the openapi model..."
+    (mkdir -p build && cd build && mkdir -p swagger)  && swagger-merger -i configuration/swagger/dyondo.yaml -o build/swagger/dyondo.api.yaml --debug && swagger-cli validate build/swagger/dyondo.api.yaml
+}
+
+build_model
