@@ -1,0 +1,20 @@
+post:
+  summary: Signin authenticates the user with Google
+  description: Signin authenticates the user with Google
+  tags:
+    - Dyondo
+  operationId: PostGoogleLogin
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          type: object
+          properties:
+            tokenId:
+              type: string
+  responses:
+    "200":
+      description: Success
+    "400":
+      description: Success

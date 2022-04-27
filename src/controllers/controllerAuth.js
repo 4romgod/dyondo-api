@@ -34,6 +34,7 @@ const controllerPreSignup = (req, res) => {
                 <p>https://www.dyondo.com</p>
             `
         };
+
         sgMail.send(activationEmailData)
             .then((sent) => {
                 return res.status(SUCCESS).json({ message: `Email has been sent to ${email}. Follow the instructions to Activate your Account.` });
@@ -167,7 +168,7 @@ const controllerForgotPassword = (req, res) => {
                 `
         };
 
-        return user.updateOne({ resetPasswordLink: token }, (err, success) => {
+        return user.updateOne({ resetPasswordToken: token }, (err, success) => {
             if (err) {
                 return res.status(BAD_REQUEST).json({ error: errorHandler(err) });
             } else {
@@ -183,20 +184,20 @@ const controllerForgotPassword = (req, res) => {
 }
 
 const controllerResetPassword = (req, res) => {
-    const { resetPasswordLink, newPassword } = req.body;
+    const { resetPasswordToken, newPassword } = req.body;
 
-    if (resetPasswordLink) {
-        verify(resetPasswordLink, process.env.JWT_RESET_PASSWORD, function (err, data) {
+    if (resetPasswordToken) {
+        verify(resetPasswordToken, process.env.JWT_RESET_PASSWORD, function (err, data) {
             if (err) {
                 return res.status(UNAUTHORIZED).json({ error: "Expired link. Try again!" });
             }
 
-            User.findOne({ resetPasswordLink }, (err, user) => {
+            User.findOne({ resetPasswordToken }, (err, user) => {
                 if (err || !user) {
                     return res.status(BAD_REQUEST).json({ error: "Cannot re-use the link. Try again" });
                 }
 
-                const updatedFields = { password: newPassword, resetPasswordLink: '' }
+                const updatedFields = { password: newPassword, resetPasswordToken: '' }
                 user = _.extend(user, updatedFields);
                 user.save((err, result) => {
                     if (err) {

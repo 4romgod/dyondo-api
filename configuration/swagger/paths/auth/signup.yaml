@@ -1,0 +1,21 @@
+post:
+  summary: Signup adds the user to database
+  description: Signup adds the user to database
+  tags:
+    - Dyondo
+  operationId: PostSignup
+  requestBody:
+    required: true
+    description: The JWT Token
+    content:
+      application/json:
+        schema:
+          type: object
+          properties:
+            token:
+              type: string
+  responses:
+    "200":
+      description: Success
+    "400":
+      description: Success

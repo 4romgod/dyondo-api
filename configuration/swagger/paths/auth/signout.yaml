@@ -1,0 +1,9 @@
+get:
+  summary: Unauthenticate the user
+  description: Unauthenticate the user
+  tags:
+    - Dyondo
+  operationId: GetSignout
+  responses:
+    "200":
+      description: Success

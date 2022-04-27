@@ -52,7 +52,7 @@ const userSchema = new mongoose.Schema({
         data: Buffer,
         contentType: String
     },
-    resetPasswordLink: {
+    resetPasswordToken: {
         data: String,
         default: ''
     }

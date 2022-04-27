@@ -1,0 +1,23 @@
+post:
+  summary: Signin authenticates the user
+  description: Signin authenticates the user
+  tags:
+    - Dyondo
+  operationId: PostSignin
+  requestBody:
+    required: true
+    description: The Signin Credentials
+    content:
+      application/json:
+        schema:
+          type: object
+          properties:
+            email:
+              type: string
+            password:
+              type: string
+  responses:
+    "200":
+      description: Success
+    "400":
+      description: Success

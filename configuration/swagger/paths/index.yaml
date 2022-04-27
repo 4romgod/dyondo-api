@@ -29,3 +29,18 @@
   $ref: user/usersProfileRead.yaml
 /admin:
   $ref: user/admin.yaml
+
+/pre-signup:
+  $ref: auth/pre-signup.yaml
+/signup:
+  $ref: auth/signup.yaml
+/signin:
+  $ref: auth/signin.yaml
+/signout:
+  $ref: auth/signout.yaml
+/forgot-password:
+  $ref: auth/forgot-password.yaml
+/reset-password:
+  $ref: auth/reset-password.yaml
+/google-login:
+  $ref: auth/google-login.yaml

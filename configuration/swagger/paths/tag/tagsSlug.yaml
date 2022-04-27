@@ -47,7 +47,7 @@ put:
     "400":
       description: "Bad Request"
     "404":
-      description: "Topic Not Fount"
+      description: "Topic Not Found"
 delete:
   summary: "Delete A Tag by the slug"
   description: "Delete A Tag by the slug"

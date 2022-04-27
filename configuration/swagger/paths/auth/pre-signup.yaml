@@ -1,0 +1,27 @@
+post:
+  summary: Pre Signup sends the user a confirmation link for the chosen email address
+  description: Pre Signup sends the user a confirmation link for the chosen email address
+  tags:
+    - Dyondo
+  operationId: PostPreSignup
+  requestBody:
+    required: true
+    description: The user details
+    content:
+      application/json:
+        schema:
+          type: object
+          properties:
+            name:
+              type: string
+            surname:
+              type: string
+            email:
+              type: string
+            password:
+              type: string
+  responses:
+    "200":
+      description: Success
+    "400":
+      description: Success
